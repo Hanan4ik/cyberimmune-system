@@ -106,9 +106,9 @@ uint16_t peripheryPort = 5767;
 float scanSquaredDistance = 0.25;
 float latScale = 0.011131884502145f;
 float lngScale = 0.011131884502145f;
-int32_t rfidLats[RFID_TAG_NUM] = { 600025970, 600025880, 600026150, 600026420, 600026420, 600026150, 600025880, 600025970, 600025880, 600026420 };
-int32_t rfidLngs[RFID_TAG_NUM] = { 278572915, 278572015, 278572555, 278572915, 278571475, 278571115, 278571475, 278570755, 278570215, 278570575 };
-char rfidIDs[RFID_TAG_NUM][6] = { "rfid0", "rfid1", "rfid2", "rfid3", "rfid4", "rfid5", "rfid6", "rfid7", "rfid8", "rfid9" };
+int32_t rfidLats[RFID_TAG_NUM] = { 600026370, 600026011, 600026191 };
+int32_t rfidLngs[RFID_TAG_NUM] = { 278576059, 278576059, 278575520 };
+char rfidIDs[RFID_TAG_NUM][6] = { "rfid1", "rfid2", "rfid3" };
 
 bool killSwitchEnabled;
 /** \endcond */

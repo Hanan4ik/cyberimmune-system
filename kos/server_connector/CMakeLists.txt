@@ -29,3 +29,7 @@ if (SERVER)
 else ()
     target_compile_definitions (ServerConnector PRIVATE NO_SERVER)
 endif()
+
+if (INSPECTOR_ROLE)
+    target_compile_definitions (ServerConnector PRIVATE IS_INSPECTOR=TRUE)
+endif()

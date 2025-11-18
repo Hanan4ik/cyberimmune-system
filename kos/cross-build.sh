@@ -1,13 +1,11 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(dirname "$(realpath "${0}")")"
-BUILD="${SCRIPT_DIR}/build"
 
 export LANG=C
 export TARGET="aarch64-kos"
 export PKG_CONFIG=""
 export SDK_PREFIX="/opt/$SDK_FOLDER_NAME"
-export INSTALL_PREFIX="$BUILD/../install"
 export PATH="$SDK_PREFIX/toolchain/bin:$PATH"
 
 export BUILD_WITH_CLANG=
@@ -19,6 +17,7 @@ KOS_TARGET=""
 BOARD_ID=""
 UNIT_TESTS=""
 PAL_TESTS=""
+INSPECTOR_ROLE=""
 SIMULATOR_IP="10.0.2.2"
 SERVER_IP="10.0.2.2"
 MQTT_IP="10.0.2.2"
@@ -65,6 +64,8 @@ function help
              Source of horizontal coordinates: gnss or lns
     --alt,
              Source of altitude: baro or lns
+    --role,
+             Role of drone: deliverer or inspector
 
   Examples:
       bash cross-build.sh -s /opt/KasperskyOS-Community-Edition-RaspberryPi4b-wifi
@@ -99,9 +100,9 @@ do
         --mqtt-password)
             MQTT_PASSWORD=$2
             ;;
-	--ntp-ip)
-	    NTP_IP=$2
-	    ;;
+        --ntp-ip)
+            NTP_IP=$2
+            ;;
         --board-id)
             BOARD_ID=$2
             ;;
@@ -161,6 +162,18 @@ do
                 exit 1
             fi
             ;;
+        --role)
+            if [ "$2" == "inspector" ]; then
+                INSPECTOR_ROLE="TRUE"
+                BUILD="${SCRIPT_DIR}/build_inspector"
+            elif [ "$2" == "deliverer" ]; then
+                INSPECTOR_ROLE="FALSE"
+                BUILD="${SCRIPT_DIR}/build_deliverer"
+            else
+                echo "Unknown drone role '$2'"
+                exit 1
+            fi
+            ;;
         -*)
             echo "Invalid option: $key"
             exit 1
@@ -169,6 +182,8 @@ do
     shift
 done
 
+export INSTALL_PREFIX="$BUILD/../install"
+
 if [ "$SIMULATION" == "" ]; then
     echo "Build target is not set"
     exit 1
@@ -176,6 +191,11 @@ fi
 
 if [ "$SERVER" == "" ] && [ "$UNIT_TESTS" != "TRUE" ] && [ "$PAL_TESTS" != "TRUE" ]; then
     echo "Build mode is not set"
+    exit 1
+fi
+
+if [ "$INSPECTOR_ROLE" == "" ]; then
+    echo "Drone role is not set"
     exit 1
 fi
 
@@ -204,6 +224,7 @@ fi
       -D COORD_SRC=$COORD_SRC \
       -D ALT_SRC=$ALT_SRC \
       -D BOARD=$BOARD \
+      -D INSPECTOR_ROLE=$INSPECTOR_ROLE \
       -D CMAKE_BUILD_TYPE:STRING=Debug \
       -D CMAKE_INSTALL_PREFIX:STRING="$INSTALL_PREFIX" \
       -D CMAKE_FIND_ROOT_PATH="${SDK_PREFIX}/sysroot-$TARGET" \

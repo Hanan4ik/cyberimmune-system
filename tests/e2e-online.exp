@@ -3,7 +3,7 @@ spawn mavproxy.py --out 172.28.5.254:14550 --out 172.28.5.254:14551 --master tcp
 set timeout 350
 expect_after eof {exit 0}
 expect_after timeout {exit 1}
-expect "AP: ArduPilot Ready" { send "wp load /home/user/ardupilot/exampleMission.txt\r" }
+expect "AP: ArduPilot Ready" { send "wp load /home/user/ardupilot/exampleMissionInspector.txt\r" }
 expect "AP: Flight plan received" { send "wp loop\r" }
 expect "AP: EKF3 IMU0 is using GPS" { send "arm throttle\r" }
 exec >@stdout 2>@stderr /home/user/tests/mission-upload-to-orvd.sh 172.28.0.4

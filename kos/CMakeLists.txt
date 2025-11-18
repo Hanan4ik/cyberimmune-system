@@ -91,7 +91,6 @@ else ()
 
     nk_build_edl_files (klog_edl_files NK_MODULE "drone_controller" EDL "resources/KlogEntity.edl")
     nk_build_edl_files (klog_storage_edl_files NK_MODULE "drone_controller" EDL "resources/KlogStorageEntity.edl" NK_FLAGS "--extended-errors")
-
 endif ()
 
 add_compile_options (-Wall -Wextra -Wconversion

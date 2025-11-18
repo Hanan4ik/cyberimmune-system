@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int flightStatusSend, missionSend, areasSend, armSend, newMissionSend;
+int flightStatusSend, missionSend, areasSend, armSend, newMissionSend, destinationRfid;
 
 int initServerConnector() {
     if (strlen(BOARD_ID))
@@ -29,6 +29,7 @@ int initServerConnector() {
     areasSend = true;
     armSend= false;
     newMissionSend = false;
+    destinationRfid = 0;
 
     return 1;
 }
@@ -57,6 +58,12 @@ int publish(char* topic, char* publication) {
         armSend = true;
     else if (strstr(topic, "api/nmission/request"))
         newMissionSend = true;
+    else if (strstr(topic, "api/rfid")) {
+        if (strstr(publication, "tag=rfid2"))
+            destinationRfid = 1;
+        else
+            destinationRfid = 2;
+    }
 
     return 1;
 }
@@ -78,19 +85,27 @@ int getSubscription(char* topic, char* message, uint32_t messageSize) {
         flightStatusSend = false;
     }
     else if (strstr(topic, "api/fmission_kos/") && missionSend) {
-        if (messageSize < 880) {
+#ifdef IS_INSPECTOR
+        if (messageSize < 420) {
             logEntry("Size of response does not fit given buffer", ENTITY_NAME, LogLevel::LOG_WARNING);
             return 0;
         }
-        strncpy(message, "$FlightMission H60.0025609_27.8572917_0.0&T1.0&W60.002597_27.8572915_1.0&W60.002588_27.8572015_1.0&W60.002642_27.8572015_1.0&W60.002642_27.8572915_1.0&D1.0&W60.002642_27.8572015_1.0&W60.002615_27.8572015_1.0&W60.002615_27.8572555_1.0&W60.002615_27.8572015_1.0&W60.002642_27.8572015_1.0&W60.002642_27.8571475_1.0&W60.002642_27.8571115_1.0&W60.002615_27.8571115_1.0&W60.002588_27.8571475_1.0&W60.002597_27.8570755_1.0&W60.002588_27.8570755_1.0&W60.002588_27.8570215_1.0&W60.002588_27.8569855_1.0&W60.002642_27.8569855_1.0&D3.0&S5.0_1200.0&D1.0&S5.0_1800.0&W60.002561_27.8569855_1.0&W60.002561_27.8572915_1.0&L0.0_0.0_0.0&I60.002597_27.8572915_0.0&I60.002588_27.8572015_0.0&I60.002615_27.8572555_0.0&I60.002642_27.8572915_0.0&I60.002642_27.8571475_0.0&I60.002615_27.8571115_0.0&I60.002588_27.8571475_0.0&I60.002597_27.8570755_0.0&I60.002588_27.8570215_0.0&I60.002642_27.8570575_0.0#", 880);
+        strncpy(message, "$FlightMission H60.0025741_27.8573723_0.0&T1.0&W60.0026011_27.8573723_1.0&W60.0026011_27.8574442_1.0&W60.0025652_27.8574442_1.0&W60.0025652_27.8574981_1.0&W60.002637_27.8574981_1.0&W60.002637_27.8576059_1.0&D3.0&W60.0026011_27.8576059_1.0&D3.0&W60.0026011_27.857552_1.0&W60.0026191_27.857552_1.0&D3.0&W60.0025921_27.857552_1.0&L0.0_0.0_0.0&I60.002637_27.8576059_0.0&I60.0026011_27.8576059_0.0&I60.0026191_27.857552_0.0#", 420);
+#else
+        if (messageSize < 308) {
+            logEntry("Size of response does not fit given buffer", ENTITY_NAME, LogLevel::LOG_WARNING);
+            return 0;
+        }
+        strncpy(message, "$FlightMission H60.002628_27.8573723_0.0&T1.0&W60.0026011_27.8573723_1.0&W60.0026011_27.8574442_1.0&W60.0025652_27.8574442_1.0&W60.0025652_27.8574981_1.0&W60.002637_27.8574981_1.0&W60.002637_27.8576059_1.0&W60.0026191_27.8576059_1.0&D3.0&S5.0_1200.0&D1.0&S5.0_1800.0&W60.0025741_27.8576059_1.0&L0.0_0.0_0.0#", 308);
+#endif
         missionSend = false;
     }
     else if (strstr(topic, "api/forbidden_zones") && areasSend) {
-        if (messageSize < 974) {
+        if (messageSize < 773) {
             logEntry("Size of response does not fit given buffer", ENTITY_NAME, LogLevel::LOG_WARNING);
             return 0;
         }
-        strncpy(message, "$ForbiddenZones 5&outerOne&7&60.002543_27.8573275&60.00266_27.8573275&60.00266_27.8569675&60.002651_27.8569675&60.002651_27.8573095&60.002543_27.8573095&60.002543_27.8573275&outerTwo&7&60.002552_27.8573095&60.002552_27.8569675&60.00266_27.8569675&60.00266_27.8569495&60.002543_27.8569495&60.002543_27.8573095&60.002552_27.8573095&innerOne&7&60.002606_27.8573095&60.002606_27.8572735&60.002624_27.8572735&60.002624_27.8572375&60.002633_27.8572375&60.002633_27.8573095&60.002606_27.8573095&innerTwo&11&60.00257_27.8572735&60.002579_27.8572735&60.002579_27.8571835&60.002633_27.8571835&60.002633_27.8571295&60.002624_27.8571295&60.002624_27.8571655&60.002579_27.8571655&60.002579_27.8570035&60.00257_27.8570035&60.00257_27.8572735&innerThree&11&60.002597_27.8570395&60.002624_27.8570395&60.002624_27.8570935&60.002651_27.8570935&60.002651_27.8570755&60.002633_27.8570755&60.002633_27.8570395&60.002651_27.8570395&60.002651_27.8570035&60.002597_27.8570035&60.002597_27.8570395#", 974);
+        strncpy(message, "$ForbiddenZones 2&outerOne&15&60.0025472_27.8573184&60.002655_27.8573184&60.002655_27.8576418&60.002646_27.8576418&60.002646_27.8574442&60.002628_27.8574442&60.002628_27.8574801&60.0025741_27.8574801&60.0025741_27.8574621&60.0026101_27.8574621&60.0026101_27.8574082&60.002646_27.8574082&60.002646_27.8573364&60.0025472_27.8573364&60.0025472_27.8573184&outerTwo&19&60.0025562_27.8573364&60.0025562_27.8574082&60.0025921_27.8574082&60.0025921_27.8574262&60.0025562_27.8574262&60.0025562_27.857516&60.002628_27.857516&60.002628_27.857534&60.0025831_27.857534&60.0025831_27.8575879&60.0025741_27.8575879&60.0025741_27.857534&60.0025562_27.857534&60.0025562_27.8576239&60.002646_27.8576239&60.002646_27.8576418&60.0025472_27.8576418&60.0025472_27.8573364&60.0025562_27.8573364#", 773);
         areasSend = false;
     }
     else if (strstr(topic, "api/arm/response/") && armSend) {
@@ -106,6 +121,23 @@ int getSubscription(char* topic, char* message, uint32_t messageSize) {
             return 0;
         }
         strncpy(message, "$Approve 0#", 13);
+    }
+    else if (strstr(topic, "api/rfid/response/") && destinationRfid) {
+        if (destinationRfid == 1) {
+            if (messageSize < 7) {
+                logEntry("Size of response does not fit given buffer", ENTITY_NAME, LogLevel::LOG_WARNING);
+                return 0;
+            }
+            strncpy(message, "$TRUE#", 7);
+        }
+        else {
+            if (messageSize < 8) {
+                logEntry("Size of response does not fit given buffer", ENTITY_NAME, LogLevel::LOG_WARNING);
+                return 0;
+            }
+            strncpy(message, "$FALSE#", 8);
+        }
+        destinationRfid = 0;
     }
     else
         strcpy(message, "");
