@@ -276,7 +276,7 @@ int main(void) {
     }
 
     //Here should be the logic for the inspector message processing
-    //An actual content starts after "message=" and ends (likely) with "&"
+    //An actual content starts after "message=" and ends with "#"
     //Mission will not be received from the server; instead it should be generated here
     //and approved by the server with 'askForMissionApproval' function
 

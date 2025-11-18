@@ -16,6 +16,7 @@ topic readwrite api/nmission/request/+
 topic readwrite api/arm/response/+
 topic readwrite api/arm/request/+
 topic readwrite api/rfid/+
+topic readwrite api/rfid/response/+
 topic readwrite api/connection_status
 topic readwrite api/dm/+/send/+
 topic readwrite api/dm/+/recv/+
@@ -33,6 +34,7 @@ topic readwrite api/nmission/request/+
 topic readwrite api/arm/response/+
 topic readwrite api/arm/request/+
 topic readwrite api/rfid/+
+topic readwrite api/rfid/response/+
 topic readwrite api/connection_status
 
 user inspector
@@ -46,8 +48,10 @@ topic readwrite api/nmission/response/inspector
 topic readwrite api/nmission/request/inspector
 topic readwrite api/arm/response/inspector
 topic readwrite api/arm/request/inspector
-topic readwrite api/dm/inspector/send/+
-topic read api/dm/inspector/recv/+
+topic readwrite api/dm/deliverer/send/+
+topic readwrite api/rfid/inspector
+topic read api/dm/deliverer/recv/+
+topic read api/rfid/response/inspector
 topic read api/forbidden_zones
 
 user deliverer
@@ -61,8 +65,10 @@ topic readwrite api/nmission/response/deliverer
 topic readwrite api/nmission/request/deliverer
 topic readwrite api/arm/response/deliverer
 topic readwrite api/arm/request/deliverer
-topic readwrite api/dm/deliverer/send/+
-topic read api/dm/deliverer/recv/+
+topic readwrite api/dm/inspector/send/+
+topic readwrite api/rfid/deliverer
+topic read api/dm/inspector/recv/+
+topic read api/rfid/response/deliverer
 topic read api/forbidden_zones
 
 # This affects all clients.
