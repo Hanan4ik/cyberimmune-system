@@ -350,7 +350,7 @@ int main(void) {
     //Scan RFID tag with 'scanRfid' function
     //Calculate a signature for message "tag=%s", rfid with 'signMessage'
     //Send message "tag=%s&sig=0x%s", tag, signature to the topic "api/rfid" with 'publishMessage'
-    //Receive the response from the topic "api/rfid/response/"
+    //Receive the response from the topic "api/rfid/response/" with 'receiveSubscription'
     //Signature of the received message can be checked with 'checkSignature'
     //If the response contains "$TRUE#" than the tag is cargo destination, and "$FALSE#" otherwise
 
