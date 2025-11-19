@@ -23,3 +23,7 @@ if (SIMULATION)
 else()
     target_link_libraries (AutopilotConnector ${bsp_CLIENT_LIB} ${uart_CLIENT_LIB})
 endif()
+
+if (INSPECTOR_ROLE)
+    target_compile_definitions (AutopilotConnector PRIVATE IS_INSPECTOR=TRUE)
+endif()

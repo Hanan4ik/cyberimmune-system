@@ -59,7 +59,11 @@ struct SimSensorDataMessage {
 
 /** \cond */
 int simSensorSocket = NULL;
+#ifdef IS_INSPECTOR
+uint16_t simSensorPort = 5776;
+#else
 uint16_t simSensorPort = 5766;
+#endif
 /** \endcond */
 
 void getSensors() {

@@ -101,7 +101,11 @@ struct SimPeripheryMessage {
 
 /** \cond */
 int peripherySocket = NULL;
+#ifdef IS_INSPECTOR
+uint16_t peripheryPort = 5777;
+#else
 uint16_t peripheryPort = 5767;
+#endif
 
 float scanSquaredDistance = 0.25;
 float latScale = 0.011131884502145f;

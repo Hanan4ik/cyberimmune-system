@@ -19,7 +19,11 @@
 
 /** \cond */
 int autopilotSocket = NULL;
+#ifdef IS_INSPECTOR
+uint16_t autopilotPort = 5775;
+#else
 uint16_t autopilotPort = 5765;
+#endif
 /** \endcond */
 
 int initAutopilotConnector() {
