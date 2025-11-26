@@ -110,8 +110,8 @@ uint16_t peripheryPort = 5767;
 float scanSquaredDistance = 0.25;
 float latScale = 0.011131884502145f;
 float lngScale = 0.011131884502145f;
-int32_t rfidLats[RFID_TAG_NUM] = { 600026370, 600026011, 600026191 };
-int32_t rfidLngs[RFID_TAG_NUM] = { 278576059, 278576059, 278575520 };
+int32_t rfidLats[RFID_TAG_NUM] = { 600024368, 600024166, 600024428 };
+int32_t rfidLngs[RFID_TAG_NUM] = { 278576362, 278576914, 278577035 };
 char rfidIDs[RFID_TAG_NUM][6] = { "rfid1", "rfid2", "rfid3" };
 
 bool killSwitchEnabled;

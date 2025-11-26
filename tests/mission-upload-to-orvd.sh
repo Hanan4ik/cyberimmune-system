@@ -29,7 +29,7 @@ echo "mission upload key is: " $(curl -s "http://$HOST:$PORT/mission_sender/key?
 
 # mission upload POST
 # $OK#8c2cb1bc1ca84e0070c0b32ac9185c9edc7e4bec84d9a73da7c087178d90f13410cc8bae5631f78d3cb166c1001f1524c3b8641933d34a4c77aec751d980e40397a8bd2c4db741532137c0eb9b3bd921d0ca8040658c7b0b9a310712662d1b6ab70a0b57dac3dce7d0fdaf296852e4cb9cb5c0857308e5388fc25e2a9cd5b01c
-echo "upload exampleMission state: " $(curl -s -X POST --data-binary "@/home/user/ardupilot/exampleMission.txt" "http://$HOST:$PORT/mission_sender/fmission_ms?id=inspector&sig=0xaa")
+echo "upload exampleMission state: " $(curl -s -X POST --data-binary "@/home/user/ardupilot/exampleMissionInspector.txt" "http://$HOST:$PORT/mission_sender/fmission_ms?id=inspector&sig=0xaa")
 
 # mission acknowledge
 # example answer: $OK
@@ -44,5 +44,5 @@ echo "get mission: " $(curl -s "http://$HOST:$PORT/admin/get_mission?id=inspecto
 echo "accept mission: " $(curl -s "http://$HOST:$PORT/admin/change_fly_accept?id=inspector&decision=0&token=$TOKEN")
 
 # Zones upload POST
-echo "upload exampleAreas state: " $(curl -s -X POST -F "token=$TOKEN" -F "file=@/home/user/ardupilot/exampleAreasA.json" "http://$HOST:$PORT/admin/import_forbidden_zones")
+echo "upload exampleAreas state: " $(curl -s -X POST -F "token=$TOKEN" -F "file=@/home/user/ardupilot/exampleAreas.json" "http://$HOST:$PORT/admin/import_forbidden_zones")
 
