@@ -45,7 +45,7 @@ void pingSession() {
 
         if (strcmp(pingMessage, "")) {
             uint8_t authenticity = 0;
-            if (!checkSignature(pingMessage, authenticity) || !authenticity) {
+            if (!checkSignature(pingMessage, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                 logEntry("Failed to check signature of ping received through Server Connector", ENTITY_NAME, LogLevel::LOG_WARNING);
                 continue;
             }
@@ -73,7 +73,7 @@ void serverUpdateCheck() {
         if (receiveSubscription("api/flight_status/", message, 4096)) {
             if (strcmp(message, "")) {
                 uint8_t authenticity = 0;
-                if (checkSignature(message, authenticity) || !authenticity) {
+                if (checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                     if (strstr(message, "$Flight -1#")) {
                         logEntry("Emergency stop request is received. Disabling motors", ENTITY_NAME, LogLevel::LOG_INFO);
                         if (!enableBuzzer())
@@ -98,7 +98,7 @@ void serverUpdateCheck() {
         if (receiveSubscription("api/forbidden_zones", message, 4096)) {
             if (strcmp(message, "")) {
                 uint8_t authenticity = 0;
-                if (checkSignature(message, authenticity) || !authenticity) {
+                if (checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                     deleteNoFlightAreas();
                     loadNoFlightAreas(message);
                     logEntry("New no-flight areas are received from the server", ENTITY_NAME, LogLevel::LOG_INFO);
@@ -155,7 +155,7 @@ int askForMissionApproval(char* mission, int& result) {
 
     uint8_t authenticity = 0;
     //Checking the signature of the received message
-    if (!checkSignature(message, authenticity) || !authenticity) {
+    if (!checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
         logEntry("Failed to check signature of new mission received through Server Connector", ENTITY_NAME, LogLevel::LOG_WARNING);
         free(message);
         return 0;
@@ -224,28 +224,24 @@ int main(void) {
     }
 
     uint8_t authenticity = 0;
-    while (!checkSignature(authResponse, authenticity) || !authenticity) {
+    while (!checkSignature(authResponse, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
         snprintf(logBuffer, 256, "Failed to check signature of auth response received through Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
         logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
         sleep(RETRY_DELAY_SEC);
     }
     logEntry("Successfully authenticated on the server", ENTITY_NAME, LogLevel::LOG_INFO);
 
-    //Constantly ask server, if message from the inspector is available
-    while (!receiveSubscription("api/dm/inspector/recv/", subscriptionBuffer, 4096) || !strcmp(subscriptionBuffer, ""))
-        sleep(1);
-
-    authenticity = 0;
-    while (!checkSignature(subscriptionBuffer, authenticity) || !authenticity) {
-        snprintf(logBuffer, 256, "Failed to check signature of message from the inspector. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-
-    //Here should be the logic for the inspector message processing (it is in subscriptionBuffer)
-    //An actual content starts after "message=" and ends with "#"
-    //Mission will not be received from the server; instead it should be generated here
-    //and approved by the server with 'askForMissionApproval' function
+    //Here, the message from the inspector should be received and parsed.
+    //Message can be received with
+    //    receiveSubscription("api/dm/{PARTNER_ID}/", subscriptionBuffer, bufferSize).
+    //If there was no message, the buffer will be empty.
+    //Next, the authenticity of the message should be checked with
+    //    checkSignature(subscriptionBuffer, MessageSource::PARTNER_DRONE, authenticity).
+    //If authenticity is returned as 'True' than the message was ineed sent by the inspector
+    //Than the message must be parsed.
+    //An actual content starts after "message=" and ends with "#".
+    //Mission will not be received from the server.
+    //Instead it should be generated here and approved by the server with 'askForMissionApproval' function.
 
     //The drone is ready to arm
     logEntry("Ready to arm", ENTITY_NAME, LogLevel::LOG_INFO);
@@ -277,7 +273,7 @@ int main(void) {
             sleep(1);
 
         authenticity = 0;
-        while (!checkSignature(subscriptionBuffer, authenticity) || !authenticity) {
+        while (!checkSignature(subscriptionBuffer, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
             snprintf(logBuffer, 256, "Failed to check signature of arm response received through Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
             logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
             sleep(RETRY_DELAY_SEC);

@@ -54,10 +54,10 @@ public:
  * \~English IPC message handler. See \ref checkSignature.
  * \~Russian Обработчик IPC-сообщения. См. \ref checkSignature.
  */
-    void CheckSignature(const std::string& message, uint8_t& success, uint8_t& correct) {
+    void CheckSignature(const std::string& message, uint8_t source, uint8_t& success, uint8_t& correct) {
         //TODO: Rewrite to cpp way
         char m[MaxMessageLength + 1] = {0};
         message.copy(m, message.size() + 1);
-        success = checkMessageSignature(m, correct);
+        success = checkMessageSignature(m, MessageSource(source), correct);
     }
 };

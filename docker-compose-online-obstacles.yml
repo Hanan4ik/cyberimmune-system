@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: kos_inspector
-    command: /home/user/kos/cross-build.sh --target sim --mode online --role inspector --board-id inspector --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username inspector --mqtt-password secret
+    command: /home/user/kos/cross-build.sh --target sim --mode online --role inspector --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username inspector --mqtt-password secret
     working_dir: /home/user/kos
     user: user
     depends_on:
@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: kos_deliverer
-    command: /home/user/kos/cross-build.sh --target sim --mode online --role deliverer --board-id deliverer --simulator-ip 172.28.0.12 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username deliverer --mqtt-password secret
+    command: /home/user/kos/cross-build.sh --target sim --mode online --role deliverer --simulator-ip 172.28.0.12 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username deliverer --mqtt-password secret
     working_dir: /home/user/kos
     user: user
     depends_on:

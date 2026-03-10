@@ -443,7 +443,7 @@ void getSensors() {
             longitude += 10000000 * atoi(lngStr);
             latitude += 10000000 * atoi(latStr);
 
-            setCoords(latitude, longitude);
+            setCoords(latitude * latSign, longitude * lngSign);
             setInfo(atof(dopStr), atoi(satsStr));
 #endif
         }

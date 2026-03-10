@@ -145,12 +145,12 @@ TEST(CredentialManager, RSA) {
 
     char key[1024] = {0};
     snprintf(key, 1024, "$Key: %s %s", getKeyN(), getKeyE());
-    EXPECT_TRUE(setRsaKey(key));
+    EXPECT_TRUE(setRsaKey(key, MessageSource::SERVER_ORVD));
 
     char signedMessage[512] = {0};
     snprintf(signedMessage, 512, "%s#%s", message, sign);
     uint8_t correct = 0;
-    EXPECT_TRUE(checkMessageSignature(signedMessage, correct));
+    EXPECT_TRUE(checkMessageSignature(signedMessage, MessageSource::DRONE_TEAMMATE, correct));
     EXPECT_TRUE(correct);
 }
 

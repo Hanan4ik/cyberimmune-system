@@ -45,7 +45,7 @@ void pingSession() {
 
         if (strcmp(pingMessage, "")) {
             uint8_t authenticity = 0;
-            if (!checkSignature(pingMessage, authenticity) || !authenticity) {
+            if (!checkSignature(pingMessage, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                 logEntry("Failed to check signature of ping received through Server Connector", ENTITY_NAME, LogLevel::LOG_WARNING);
                 continue;
             }
@@ -73,7 +73,7 @@ void serverUpdateCheck() {
         if (receiveSubscription("api/flight_status/", message, 4096)) {
             if (strcmp(message, "")) {
                 uint8_t authenticity = 0;
-                if (checkSignature(message, authenticity) || !authenticity) {
+                if (checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                     if (strstr(message, "$Flight -1#")) {
                         logEntry("Emergency stop request is received. Disabling motors", ENTITY_NAME, LogLevel::LOG_INFO);
                         if (!enableBuzzer())
@@ -98,7 +98,7 @@ void serverUpdateCheck() {
         if (receiveSubscription("api/forbidden_zones", message, 4096)) {
             if (strcmp(message, "")) {
                 uint8_t authenticity = 0;
-                if (checkSignature(message, authenticity) || !authenticity) {
+                if (checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
                     deleteNoFlightAreas();
                     loadNoFlightAreas(message);
                     logEntry("New no-flight areas are received from the server", ENTITY_NAME, LogLevel::LOG_INFO);
@@ -155,7 +155,7 @@ int askForMissionApproval(char* mission, int& result) {
 
     uint8_t authenticity = 0;
     //Checking the signature of the received message
-    if (!checkSignature(message, authenticity) || !authenticity) {
+    if (!checkSignature(message, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
         logEntry("Failed to check signature of new mission received through Server Connector", ENTITY_NAME, LogLevel::LOG_WARNING);
         free(message);
         return 0;
@@ -224,7 +224,7 @@ int main(void) {
     }
 
     uint8_t authenticity = 0;
-    while (!checkSignature(authResponse, authenticity) || !authenticity) {
+    while (!checkSignature(authResponse, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
         snprintf(logBuffer, 256, "Failed to check signature of auth response received through Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
         logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
         sleep(RETRY_DELAY_SEC);
@@ -236,7 +236,7 @@ int main(void) {
         sleep(1);
 
     authenticity = 0;
-    while (!checkSignature(subscriptionBuffer, authenticity) || !authenticity) {
+    while (!checkSignature(subscriptionBuffer, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
         snprintf(logBuffer, 256, "Failed to check signature of mission received through Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
         logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
         sleep(RETRY_DELAY_SEC);
@@ -277,7 +277,7 @@ int main(void) {
             sleep(1);
 
         authenticity = 0;
-        while (!checkSignature(subscriptionBuffer, authenticity) || !authenticity) {
+        while (!checkSignature(subscriptionBuffer, MessageSource::SERVER_ORVD, authenticity) || !authenticity) {
             snprintf(logBuffer, 256, "Failed to check signature of arm response received through Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
             logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
             sleep(RETRY_DELAY_SEC);
@@ -322,10 +322,9 @@ int main(void) {
     //If the response contains "$TRUE#" than the tag is cargo destination, and "$FALSE#" otherwise
 
     /* Send message to deliverer */
-    //Calculate a signature for message "message=%s", message_text
-    //Message content is not specified and can be in any form
-    //Send message "message=%s&sig=0x%s", message, signature to the topic "api/dm/%s/send", receiver_id = deliverer
-    //with 'publishMessage'
+    //Calculate a signature for message "message={Message}".
+    //Content of 'Message' is not specified and can be in any form.
+    //Send message "message={Message}&sig={Signature}" to the topic "api/dm/{PARTNER_ID}" with 'publishMessage'.
 
     while (true)
         sleep(1000);

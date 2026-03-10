@@ -37,14 +37,14 @@ int signMessage(char* message, char* signature, uint32_t signatureSize) {
     return 1;
 }
 
-int checkSignature(char* message, uint8_t &authenticity) {
+int checkSignature(char* message, MessageSource source, uint8_t &authenticity) {
     // TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
     auto proxy              = app.MakeProxy<CredentialManagerInterface>(kosipc::ConnectStaticChannel("credential_manager_connection", "interface"));
 
     try {
-        proxy->CheckSignature(std::string(message), success, authenticity);
+        proxy->CheckSignature(std::string(message), (uint8_t)source, success, authenticity);
     }
     catch (...) {
         std::cerr << "Exception on proxy->CheckSignature request: message="

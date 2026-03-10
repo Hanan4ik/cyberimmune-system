@@ -13,13 +13,13 @@ tmux send-keys -t flight_controller "cd planner; ./APM_Planner.AppImage" Enter
 tmux split-window -h -l 66% -t flight_controller
 if [[ $* == *"--no-server"* ]]
 	then
-		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode offline --role inspector --board-id inspector" Enter
+		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode offline --role inspector" Enter
 		tmux split-window -h -l 50% -t flight_controller
-		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode offline --role deliverer --board-id deliverer" Enter
+		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode offline --role deliverer" Enter
 	else
-		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode online --role inspector --board-id inspector --mqtt-username inspector --mqtt-password secret" Enter
+		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode online --role inspector --mqtt-username inspector --mqtt-password secret" Enter
 		tmux split-window -h -l 50% -t flight_controller
-		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode online --role deliverer --board-id deliverer --mqtt-username deliverer --mqtt-password secret" Enter
+		tmux send-keys -t flight_controller "cd kos; ./cross-build.sh --target sim --mode online --role deliverer --mqtt-username deliverer --mqtt-password secret" Enter
 fi
 tmux split-window -v -t flight_controller
 if [[ $* == *"--with-obstacles"* ]]

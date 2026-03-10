@@ -16,4 +16,5 @@ add_executable (CredentialManager "src/main.cpp" "src/credential_manager.cpp"
 add_dependencies (CredentialManager CREDENTIAL_MANAGER_EDL SERVER_CONNECTOR_IDL)
 
 target_compile_definitions (CredentialManager PRIVATE ENTITY_NAME="Credential Manager")
+target_compile_definitions (CredentialManager PRIVATE PARTNER_ID="${PARTNER_ID}")
 bind_nk_targets (CredentialManager vfs::client MbedTLS::mbedtls ${CMAKE_THREAD_LIBS_INIT} CREDENTIAL_MANAGER_EDL SERVER_CONNECTOR_IDL)

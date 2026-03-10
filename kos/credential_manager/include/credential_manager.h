@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../../shared/include/ipc_messages_logger.h"
+#include "../../shared/include/ipc_messages_credential_manager.h"
 #include <stdint.h>
 
 /**
@@ -81,7 +82,7 @@ int getRsaKey();
  * \param[in] key Строка с открытой частью ключа. Требуемый формат строки: "$Key: n-часть_ключа e-часть_ключа".
  * \return Возвращает 1, если ключ был успешно установлен, иначе -- 0.
  */
-int setRsaKey(char* key);
+int setRsaKey(char* key, MessageSource source);
 
 /**
  * \~English Computes an RSA signature of a given message.
@@ -104,7 +105,7 @@ int getMessageSignature(char* message, char* sign);
  * \param[out] authenticity Результат проверки аутентичности сообщения.
  * \return Возвращает 1, если аутентичность была проверена (но не обязательно подтверждена), иначе -- 0.
  */
-int checkMessageSignature(char* message, uint8_t &correct);
+int checkMessageSignature(char* message, MessageSource source, uint8_t &correct);
 
 /**
  * \~English Returns n-part of security module RSA key.

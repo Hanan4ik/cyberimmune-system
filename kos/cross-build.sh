@@ -15,6 +15,7 @@ SIMULATION=""
 SERVER=""
 KOS_TARGET=""
 BOARD_ID=""
+PARTNER_ID=""
 UNIT_TESTS=""
 PAL_TESTS=""
 INSPECTOR_ROLE=""
@@ -43,6 +44,9 @@ function help
              Default: 1.4.0.102
     --board-id,
              User-defined board ID to use instead of MAC-address
+    --partner-id,
+             Board ID of the partner (deliverer's for inspector and inspector's for deliverer)
+             Use "NULL" if single drone is used
     --simulator-ip,
              User-defined IP of SITL
     --server-ip,
@@ -104,6 +108,9 @@ do
             ;;
         --board-id)
             BOARD_ID=$2
+            ;;
+        --partner-id)
+            PARTNER_ID=$2
             ;;
         --target)
             if [ "$2" == "hardware" ] || [ "$2" == "real" ]; then
@@ -207,6 +214,24 @@ if [ "$SDK_TYPE" == "" ] || [ "$SDK_VERSION" == "" ]; then
     exit 1
 fi
 
+if [ "$SIMULATION" == "TRUE" ]; then
+    if [ "$INSPECTOR_ROLE" == "TRUE" ]; then
+        if [ "BOARD_ID" == "" ]; then
+            BOARD_ID="inspector"
+        fi
+        if [ "PARTNER_ID" == ""]; then
+            PARTNER_ID="deliverer"
+        fi
+    else
+        if [ "BOARD_ID" == "" ]; then
+            BOARD_ID="deliverer"
+        fi
+        if [ "PARTNER_ID" == ""]; then
+            PARTNER_ID="inspector"
+        fi
+    fi
+fi
+
 export SDK_PREFIX="/opt/KasperskyOS-Community-Edition-$SDK_TYPE-$SDK_VERSION"
 export INSTALL_PREFIX="$BUILD/../install"
 
@@ -216,6 +241,7 @@ export INSTALL_PREFIX="$BUILD/../install"
       -D UNIT_TESTS="$UNIT_TESTS" \
       -D PAL_TESTS="$PAL_TESTS" \
       -D BOARD_ID="$BOARD_ID" \
+      -D PARTNER_ID="$PARTNER_ID" \
       -D SIMULATOR_IP=$SIMULATOR_IP \
       -D SERVER_IP=$SERVER_IP \
       -D MQTT_IP=$MQTT_IP \
