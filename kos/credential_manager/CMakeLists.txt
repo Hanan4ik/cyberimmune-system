@@ -18,4 +18,4 @@ add_dependencies (CredentialManager credential_manager_edl_files)
 add_dependencies (CredentialManager server_connector_idl_files)
 
 target_compile_definitions (CredentialManager PRIVATE ENTITY_NAME="Credential Manager")
-target_link_libraries (CredentialManager ${vfs_CLIENT_LIB} MbedTLS::mbedtls ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries (CredentialManager vfs::client MbedTLS::mbedtls ${CMAKE_THREAD_LIBS_INIT})

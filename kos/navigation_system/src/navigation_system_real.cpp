@@ -105,7 +105,7 @@ int readRegister16(uint8_t reg, uint8_t* val) {
     messages[0].len = 1;
 
     messages[1].addr = 0x76;
-    messages[1].flags = I2C_FLAG_RD;
+    messages[1].flags = I2C_MASTER_READ;
     messages[1].buf = readBuffer;
     messages[1].len = 2;
 
@@ -144,7 +144,7 @@ int readRegister24(uint8_t reg, int32_t &val) {
     messages[0].len = 1;
 
     messages[1].addr = 0x76;
-    messages[1].flags = I2C_FLAG_RD;
+    messages[1].flags = I2C_MASTER_READ;
     messages[1].buf = readBuffer;
     messages[1].len = 3;
 

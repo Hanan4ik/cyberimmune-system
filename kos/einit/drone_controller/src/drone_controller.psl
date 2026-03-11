@@ -1,5 +1,6 @@
 /* Solution security policy */
 use nk.base._
+use kl.Ntpd._
 
 /* Including EDL files */
 use EDL Einit

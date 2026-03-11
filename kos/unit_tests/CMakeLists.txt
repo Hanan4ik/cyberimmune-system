@@ -24,4 +24,4 @@ target_compile_definitions (UnitTests PRIVATE BOARD_ID="id=${BOARD_ID}")
 
 target_compile_features (UnitTests PRIVATE cxx_std_17)
 
-target_link_libraries (UnitTests MbedTLS::mbedtls gtest ${CMAKE_THREAD_LIBS_INIT} ${logger_LIB} ${vfs_CLIENT_LIB})
+target_link_libraries (UnitTests vfs::client MbedTLS::mbedtls gtest ${CMAKE_THREAD_LIBS_INIT})

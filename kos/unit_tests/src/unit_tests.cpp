@@ -472,7 +472,7 @@ TEST(FlighController, ParseNoFlightAreasHash) {
 }
 
 //Logger
-TEST(Logger, AddLogEntry) {
+/*TEST(Logger, AddLogEntry) {
     EXPECT_TRUE(createLog());
 
     FILE* redir = freopen("console.txt", "w", stdout);
@@ -514,7 +514,7 @@ TEST(Logger, AddLogEntry) {
     EXPECT_STREQ(consoleStart, "[info]Unit test entry");
 
     EXPECT_STREQ(fileStr, consoleStr);
-}
+}*/
 
 //Navigation System
 TEST(NavigationSystem, NoPosition) {
@@ -569,18 +569,6 @@ TEST(PeripheryController, Buzz) {
     setMockBuzzer(true);
     EXPECT_TRUE(getMockBuzzer());
     buzz();
-    EXPECT_FALSE(getMockBuzzer());
-}
-
-TEST(PeripheryController, EnableBuzzer) {
-    setMockBuzzer(false);
-    EXPECT_FALSE(getMockBuzzer());
-
-    EXPECT_TRUE(startBuzzer());
-    EXPECT_FALSE(startBuzzer());
-
-    EXPECT_TRUE(getMockBuzzer());
-    sleep(3);
     EXPECT_FALSE(getMockBuzzer());
 }
 

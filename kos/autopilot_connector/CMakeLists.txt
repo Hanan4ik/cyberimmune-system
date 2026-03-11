@@ -19,9 +19,9 @@ target_compile_definitions (AutopilotConnector PRIVATE ENTITY_NAME="Autopilot Co
 
 if (SIMULATION)
     target_compile_definitions (AutopilotConnector PRIVATE SIMULATOR_IP="${SIMULATOR_IP}")
-    target_link_libraries (AutopilotConnector ${vfs_CLIENT_LIB})
+    target_link_libraries (AutopilotConnector vfs::client)
 else()
-    target_link_libraries (AutopilotConnector ${bsp_CLIENT_LIB} ${uart_CLIENT_LIB})
+    target_link_libraries (AutopilotConnector bsp::client uart::client)
 endif()
 
 if (INSPECTOR_ROLE)

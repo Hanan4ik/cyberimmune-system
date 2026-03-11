@@ -1,7 +1,6 @@
 project (einit)
 
 include (platform/image)
-include (${KL_SDK_ROOT_PATH}/common/build-sd-image.cmake)
 
 project_header_default ("STANDARD_GNU_11:YES" "STRICT_WARNINGS:YES")
 

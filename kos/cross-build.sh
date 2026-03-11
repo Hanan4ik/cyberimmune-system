@@ -5,8 +5,8 @@ SCRIPT_DIR="$(dirname "$(realpath "${0}")")"
 export LANG=C
 export TARGET="aarch64-kos"
 export PKG_CONFIG=""
-export SDK_PREFIX="/opt/$SDK_FOLDER_NAME"
-export PATH="$SDK_PREFIX/toolchain/bin:$PATH"
+export SDK_VERSION="1.4.0.102"
+export SDK_TYPE=""
 
 export BUILD_WITH_CLANG=
 export BUILD_WITH_GCC=
@@ -24,7 +24,6 @@ MQTT_IP="10.0.2.2"
 MQTT_USERNAME=""
 MQTT_PASSWORD=""
 NTP_IP=${SERVER_IP}
-BOARD="RPI4_BCM2711"
 COORD_SRC=1
 ALT_SRC=1
 
@@ -39,9 +38,9 @@ function help
   Compile and link precompiled_vfs project with respect to specified arguments.
 
   Optional arguments:
-    -s, --sdk-path,
-             Path to KasperskyOS Community Edition SDK
-             Default: ${SDK_PREFIX}
+    -v, --sdk-version,
+             Version of KasperskyOS Community Edition SDK
+             Default: 1.4.0.102
     --board-id,
              User-defined board ID to use instead of MAC-address
     --simulator-ip,
@@ -82,8 +81,8 @@ do
             help
             exit 0
             ;;
-        --sdk-path|-s)
-            SDK_PREFIX=$2
+        --sdk-version|-v)
+            SDK_VERSION=$2
             ;;
         --simulator-ip)
             SIMULATOR_IP=$2
@@ -112,21 +111,27 @@ do
                 UNIT_TESTS="FALSE"
                 PAL_TESTS="FALSE"
                 KOS_TARGET="kos-image"
+                SDK_TYPE="RaspberryPi4b"
             elif [ "$2" == "simulation" ] || [ "$2" == "sim" ]; then
                 SIMULATION="TRUE"
                 UNIT_TESTS="FALSE"
                 PAL_TESTS="FALSE"
                 KOS_TARGET="sim"
+                SDK_TYPE="Qemu"
             elif [ "$2" == "unit-tests" ] || [ "$2" == "unit" ]; then
                 SIMULATION="TRUE"
                 UNIT_TESTS="TRUE"
                 PAL_TESTS="FALSE"
                 KOS_TARGET="sim"
+                SDK_TYPE="Qemu"
+                BUILD="${SCRIPT_DIR}/build"
             elif [ "$2" == "pal-tests" ] || [ "$2" == "pal" ]; then
                 SIMULATION="TRUE"
                 UNIT_TESTS="FALSE"
                 PAL_TESTS="TRUE"
                 KOS_TARGET="pal-test0"
+                SDK_TYPE="Qemu"
+                BUILD="${SCRIPT_DIR}/build"
             else
                 echo "Unknown target '$2'"
                 exit 1
@@ -182,8 +187,6 @@ do
     shift
 done
 
-export INSTALL_PREFIX="$BUILD/../install"
-
 if [ "$SIMULATION" == "" ]; then
     echo "Build target is not set"
     exit 1
@@ -194,20 +197,18 @@ if [ "$SERVER" == "" ] && [ "$UNIT_TESTS" != "TRUE" ] && [ "$PAL_TESTS" != "TRUE
     exit 1
 fi
 
-if [ "$INSPECTOR_ROLE" == "" ]; then
+if [ "$INSPECTOR_ROLE" == "" ] && [ "$UNIT_TESTS" == "FALSE" ] && [ "$PAL_TESTS" == "FALSE" ]; then
     echo "Drone role is not set"
     exit 1
 fi
 
-TOOLCHAIN_SUFFIX=""
-
-if [ "$BUILD_WITH_CLANG" == "y" ]; then
-    TOOLCHAIN_SUFFIX="-clang"
+if [ "$SDK_TYPE" == "" ] || [ "$SDK_VERSION" == "" ]; then
+    echo "KasperskyOS SDK path is not correct"
+    exit 1
 fi
 
-if [ "$BUILD_WITH_GCC" == "y" ]; then
-    TOOLCHAIN_SUFFIX="-gcc"
-fi
+export SDK_PREFIX="/opt/KasperskyOS-Community-Edition-$SDK_TYPE-$SDK_VERSION"
+export INSTALL_PREFIX="$BUILD/../install"
 
 "$SDK_PREFIX/toolchain/bin/cmake" -G "Unix Makefiles" -B "$BUILD" \
       -D SIMULATION=$SIMULATION \
@@ -223,10 +224,8 @@ fi
       -D NTP_IP=$NTP_IP \
       -D COORD_SRC=$COORD_SRC \
       -D ALT_SRC=$ALT_SRC \
-      -D BOARD=$BOARD \
       -D INSPECTOR_ROLE=$INSPECTOR_ROLE \
       -D CMAKE_BUILD_TYPE:STRING=Debug \
       -D CMAKE_INSTALL_PREFIX:STRING="$INSTALL_PREFIX" \
-      -D CMAKE_FIND_ROOT_PATH="${SDK_PREFIX}/sysroot-$TARGET" \
-      -D CMAKE_TOOLCHAIN_FILE="$SDK_PREFIX/toolchain/share/toolchain-$TARGET$TOOLCHAIN_SUFFIX.cmake" \
+      -D CMAKE_TOOLCHAIN_FILE="$SDK_PREFIX/toolchain/share/toolchain-aarch64-kos.cmake" \
       "$SCRIPT_DIR/" && "$SDK_PREFIX/toolchain/bin/cmake" --build "$BUILD" --target "$KOS_TARGET" --verbose

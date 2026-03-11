@@ -96,7 +96,7 @@ int getRsaKey() {
     if (file == -1) {
         if (!generateRsaKey())
             return 0;
-        file = open("/rsa", O_RDWR | O_CREAT);
+        file = open("/rsa", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IROTH);
         if (file == -1) {
             logEntry("Failed to create file to store generated RSA key", ENTITY_NAME, LogLevel::LOG_ERROR);
             return 0;

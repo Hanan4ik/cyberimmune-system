@@ -3,8 +3,6 @@ project (einit)
 include (platform/image)
 include (test-generator/add_kss_pal_qemu_tests)
 
-include (${KL_SDK_ROOT_PATH}/common/build-sd-image.cmake)
-
 project_header_default ("STANDARD_GNU_14:YES" "STRICT_WARNINGS:YES")
 
 set (ENTITIES

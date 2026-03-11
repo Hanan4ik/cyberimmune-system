@@ -20,10 +20,10 @@ target_compile_definitions (NavigationSystem PRIVATE ENTITY_NAME="Navigation Sys
 
 if (SIMULATION)
     target_compile_definitions (NavigationSystem PRIVATE SIMULATOR_IP="${SIMULATOR_IP}")
-    target_link_libraries (NavigationSystem ${vfs_CLIENT_LIB})
+    target_link_libraries (NavigationSystem vfs::client)
 else ()
     target_compile_definitions (NavigationSystem PRIVATE COORD_SRC=${COORD_SRC} ALT_SRC=${ALT_SRC})
-    target_link_libraries (NavigationSystem ${bsp_CLIENT_LIB} ${uart_CLIENT_LIB} ${i2c_CLIENT_LIB})
+    target_link_libraries (NavigationSystem bsp::client uart::client i2c::client)
 endif ()
 target_link_libraries (NavigationSystem ${CMAKE_THREAD_LIBS_INIT})
 

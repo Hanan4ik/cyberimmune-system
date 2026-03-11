@@ -11,4 +11,4 @@ add_dependencies (Logger logger_edl_files)
 
 target_compile_definitions (Logger PRIVATE ENTITY_NAME="Logger")
 target_compile_features (Logger PRIVATE cxx_std_17)
-target_link_libraries (Logger ${vfs_CLIENT_LIB} ${logger_LIB})
+target_link_libraries (Logger vfs::client)

@@ -25,7 +25,7 @@ if (SERVER)
         MQTT_USERNAME="${MQTT_USERNAME}"
         MQTT_PASSWORD="${MQTT_PASSWORD}"
     )
-    target_link_libraries (ServerConnector ${vfs_CLIENT_LIB} ${wpa_CLIENT_LIB} ${mosquitto_CXX_LIB})
+    target_link_libraries (ServerConnector vfs::client ${wpa_CLIENT_LIB} ${mosquitto_CXX_LIB})
 else ()
     target_compile_definitions (ServerConnector PRIVATE NO_SERVER)
 endif()

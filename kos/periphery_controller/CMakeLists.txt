@@ -21,9 +21,9 @@ target_compile_definitions (PeripheryController PRIVATE ENTITY_NAME="Periphery C
 if (SIMULATION)
     target_sources (PeripheryController PUBLIC "../shared/src/ipc_messages_navigation_system.cpp")
     target_compile_definitions (PeripheryController PRIVATE SIMULATOR_IP="${SIMULATOR_IP}")
-    target_link_libraries (PeripheryController ${vfs_CLIENT_LIB})
+    target_link_libraries (PeripheryController vfs::client)
 else ()
-    target_link_libraries (PeripheryController ${bsp_CLIENT_LIB} ${gpio_CLIENT_LIB} ${uart_CLIENT_LIB})
+    target_link_libraries (PeripheryController bsp::client gpio::client uart::client)
 endif()
 target_link_libraries (PeripheryController ${CMAKE_THREAD_LIBS_INIT})
 
