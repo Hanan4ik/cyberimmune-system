@@ -11,7 +11,6 @@
 #include <kosipc/serve_static_channel.h>
 
 #include "../include/navigation_system.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,11 +84,6 @@ public:
  * CredentialManager и ServerConnector соответственно.
  */
 int main(void) {
-    while (!waitForInit("logger_connection", "Logger")) {
-        logEntry("Failed to receive initialization notification from Logger. Trying again in 1s", ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(1);
-    }
-
     if (!initNavigationSystem())
         return EXIT_FAILURE;
 

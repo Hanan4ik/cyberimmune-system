@@ -12,7 +12,7 @@ endif()
 
 add_executable (PeripheryController "src/main.cpp" "src/periphery_controller.cpp" ${PERIPHERY_CONTROLLER_SRC}
     "src/periphery_controller_interface.cpp" "../shared/src/initialization_interface.cpp"
-    "../shared/src/ipc_messages_initialization.cpp" "../shared/src/ipc_messages_logger.cpp"
+    "../shared/src/ipc_messages_logger.cpp"
     "../shared/src/ipc_messages_server_connector.cpp")
 add_dependencies (PeripheryController PERIPHERY_CONTROLLER_EDL)
 

@@ -11,7 +11,6 @@
 
 #include "../include/periphery_controller.h"
 #include "../../shared/include/initialization_interface.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,11 +79,6 @@ public:
  * компоненты CredentialManager и ServerConnector соответственно.
  */
 int main(void) {
-    while (!waitForInit("logger_connection", "Logger")) {
-        logEntry("Failed to receive initialization notification from Logger. Trying again in 1s", ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(1);
-    }
-
     if (!initPeripheryController())
         return EXIT_FAILURE;
 

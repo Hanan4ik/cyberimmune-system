@@ -6,7 +6,6 @@
 
 #include "../include/flight_controller.h"
 #include "../../shared/include/initialization_interface.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 #include "../../shared/include/ipc_messages_autopilot_connector.h"
 #include "../../shared/include/ipc_messages_credential_manager.h"
 #include "../../shared/include/ipc_messages_navigation_system.h"
@@ -194,37 +193,6 @@ int main(void) {
     char signBuffer[257] = {0};
     char publicationBuffer[1024] = {0};
     char subscriptionBuffer[4096] = {0};
-    //Before do anything, we need to ensure, that other modules are ready to work
-    while (!waitForInit("logger_connection", "Logger")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Logger. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-    while (!waitForInit("periphery_controller_connection", "PeripheryController")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Periphery Controller. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-    while (!waitForInit("autopilot_connector_connection", "AutopilotConnector")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Autopilot Connector. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-    while (!waitForInit("navigation_system_connection", "NavigationSystem")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Navigation System. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-    while (!waitForInit("server_connector_connection", "ServerConnector")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Server Connector. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
-    while (!waitForInit("credential_manager_connection", "CredentialManager")) {
-        snprintf(logBuffer, 256, "Failed to receive initialization notification from Credential Manager. Trying again in %ds", RETRY_DELAY_SEC);
-        logEntry(logBuffer, ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(RETRY_DELAY_SEC);
-    }
 
     //Get ID from ServerConnector
     while (!getBoardId(boardId)) {

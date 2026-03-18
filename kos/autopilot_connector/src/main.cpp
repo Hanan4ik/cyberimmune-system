@@ -12,7 +12,6 @@
 
 #include "../include/autopilot_connector.h"
 #include "../../shared/include/initialization_interface.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,11 +135,6 @@ public:
  * от других компонентов модуля безопасности, исполняет запрашиваемые действия и отправляет IPC-ответы.
  */
 int main(void) {
-    while (!waitForInit("logger_connection", "Logger")) {
-        logEntry("Failed to receive initialization notification from Logger. Trying again in 1s", ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(1);
-    }
-
     if (!initAutopilotConnector())
         return EXIT_FAILURE;
 

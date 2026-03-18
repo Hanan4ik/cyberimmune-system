@@ -27,10 +27,3 @@ void initReceiverInterface(const char* connection, NkKosTransport &transport) {
     assert(handle != INVALID_HANDLE);
     NkKosTransport_Init(&transport, handle, NK_NULL, 0);
 }
-
-nk_err_t WaitForInitImpl(struct Initialization *self,
-                        const Initialization_WaitForInit_req *req, const struct nk_arena *reqArena,
-                        Initialization_WaitForInit_res *res, struct nk_arena *resArena) {
-    res->success = true;
-    return NK_EOK;
-}

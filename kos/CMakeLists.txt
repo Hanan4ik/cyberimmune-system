@@ -73,18 +73,9 @@ if (UNIT_TESTS)
                 NK_MODULE       "drone_controller"
                 LANG            "C")
 else ()
-    add_nk_idl (INITIALIZATION_IDL "${RESOURCES}/Initialization.idl"
-                NK_MODULE   "drone_controller"
-                LANG        "CXX")
-
-
     add_nk_idl (LOGGER_IDL "${RESOURCES}/LoggerInterface.idl"
                 NK_MODULE   "drone_controller"
                 LANG        "CXX")
-
-    add_dependencies (LOGGER_IDL INITIALIZATION_IDL)
-    bind_nk_targets (LOGGER_IDL INITIALIZATION_IDL)
-
 
     add_nk_idl (AUTOPILOT_CONNECTOR_IDL "${RESOURCES}/AutopilotConnectorInterface.idl"
                 NK_MODULE               "drone_controller"
@@ -93,14 +84,12 @@ else ()
     add_dependencies (AUTOPILOT_CONNECTOR_IDL LOGGER_IDL)
     bind_nk_targets (AUTOPILOT_CONNECTOR_IDL LOGGER_IDL)
 
-
     add_nk_idl (CREDENTIAL_MANAGER_IDL  "${RESOURCES}/CredentialManagerInterface.idl"
                 NK_MODULE               "drone_controller"
                 LANG                    "CXX")
 
     add_dependencies (CREDENTIAL_MANAGER_IDL LOGGER_IDL)
     bind_nk_targets (CREDENTIAL_MANAGER_IDL LOGGER_IDL)
-
 
     add_nk_idl (NAVIGATION_SYSTEM_IDL   "${RESOURCES}/NavigationSystemInterface.idl"
                 NK_MODULE               "drone_controller"
@@ -109,7 +98,6 @@ else ()
     add_dependencies (NAVIGATION_SYSTEM_IDL LOGGER_IDL)
     bind_nk_targets (NAVIGATION_SYSTEM_IDL LOGGER_IDL)
 
-
     add_nk_idl (PERIPHERY_CONTROLLER_IDL    "${RESOURCES}/PeripheryControllerInterface.idl"
                 NK_MODULE                   "drone_controller"
                 LANG                        "CXX")
@@ -117,14 +105,12 @@ else ()
     add_dependencies (PERIPHERY_CONTROLLER_IDL LOGGER_IDL)
     bind_nk_targets (PERIPHERY_CONTROLLER_IDL LOGGER_IDL)
 
-
     add_nk_idl (SERVER_CONNECTOR_IDL    "${RESOURCES}/ServerConnectorInterface.idl"
                 NK_MODULE               "drone_controller"
                 LANG                    "CXX")
 
     add_dependencies (SERVER_CONNECTOR_IDL LOGGER_IDL)
     bind_nk_targets (SERVER_CONNECTOR_IDL LOGGER_IDL)
-
 
     add_nk_edl (LOGGER_EDL  "${RESOURCES}/Logger.edl"
                 NK_MODULE   "drone_controller"
@@ -135,14 +121,12 @@ else ()
     add_dependencies (LOGGER_EDL SERVER_CONNECTOR_IDL)
     bind_nk_targets (LOGGER_EDL SERVER_CONNECTOR_IDL)
 
-
     add_nk_edl (AUTOPILOT_CONNECTOR_EDL "${RESOURCES}/AutopilotConnector.edl"
                 NK_MODULE               "drone_controller"
                 LANG                    "CXX")
 
     add_dependencies (AUTOPILOT_CONNECTOR_EDL AUTOPILOT_CONNECTOR_IDL)
     bind_nk_targets (AUTOPILOT_CONNECTOR_EDL AUTOPILOT_CONNECTOR_IDL)
-
 
     add_nk_edl (CREDENTIAL_MANAGER_EDL  "${RESOURCES}/CredentialManager.edl"
                 NK_MODULE               "drone_controller"
@@ -151,7 +135,6 @@ else ()
     add_dependencies (CREDENTIAL_MANAGER_EDL CREDENTIAL_MANAGER_IDL)
     bind_nk_targets (CREDENTIAL_MANAGER_EDL CREDENTIAL_MANAGER_IDL)
 
-
     add_nk_edl (NAVIGATION_SYSTEM_EDL   "${RESOURCES}/NavigationSystem.edl"
                 NK_MODULE               "drone_controller"
                 LANG                    "CXX")
@@ -159,14 +142,12 @@ else ()
     add_dependencies (NAVIGATION_SYSTEM_EDL NAVIGATION_SYSTEM_IDL)
     bind_nk_targets (NAVIGATION_SYSTEM_EDL NAVIGATION_SYSTEM_IDL)
 
-
     add_nk_edl (PERIPHERY_CONTROLLER_EDL    "${RESOURCES}/PeripheryController.edl"
                 NK_MODULE                   "drone_controller"
                 LANG                        "CXX")
 
     add_dependencies (PERIPHERY_CONTROLLER_EDL PERIPHERY_CONTROLLER_IDL)
     bind_nk_targets (PERIPHERY_CONTROLLER_EDL PERIPHERY_CONTROLLER_IDL)
-
 
     add_nk_edl (SERVER_CONNECTOR_EDL    "${RESOURCES}/ServerConnector.edl"
                 NK_MODULE               "drone_controller"
@@ -176,7 +157,6 @@ else ()
     bind_nk_targets (SERVER_CONNECTOR_EDL SERVER_CONNECTOR_IDL)
 
     nk_build_edl_files (klog_edl_files NK_MODULE "drone_controller" EDL "resources/KlogEntity.edl")
-
     nk_build_edl_files (klog_storage_edl_files NK_MODULE "drone_controller" EDL "resources/KlogStorageEntity.edl" NK_FLAGS "--extended-errors")
 
     add_nk_edl (FLIGHT_CONTROLLER_EDL   "${RESOURCES}/FlightController.edl"

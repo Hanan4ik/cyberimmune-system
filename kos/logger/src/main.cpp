@@ -35,7 +35,7 @@ int main(void) {
     initReceiverInterface("logger_connection", transport);
 
     Logger_entity entity;
-    Logger_entity_init(&entity, CreateInitializationImpl(), CreateLoggerInterfaceImpl());
+    Logger_entity_init(&entity, CreateLoggerInterfaceImpl());
 
     Logger_entity_req req;
     Logger_entity_res res;

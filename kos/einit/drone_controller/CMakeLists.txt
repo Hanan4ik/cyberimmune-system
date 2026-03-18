@@ -82,7 +82,6 @@ if (SIMULATION OR SERVER)
 
     list(APPEND ENTITIES precompiled_vfs::VfsSdCardFs precompiled_vfs::VfsNet rump::dhcpcd_entity)
     list(APPEND FILES ${CMAKE_SOURCE_DIR}/resources/hdd/etc/dhcpcd.conf
-	        ${CMAKE_SOURCE_DIR}/resources/hdd/var/db/dhcpcd/.gitkeep
 		    ${CMAKE_SOURCE_DIR}/resources/hdd/etc/ntp.conf
 	        ${CMAKE_SOURCE_DIR}/resources/hdd/etc/hosts
 		)

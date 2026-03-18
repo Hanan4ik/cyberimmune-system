@@ -16,7 +16,6 @@ add_executable (ServerConnector
     ${SERVER_CONNECTOR_SRC}
     "src/server_connector_interface.cpp"
     "../shared/src/initialization_interface.cpp"
-    "../shared/src/ipc_messages_initialization.cpp"
     "../shared/src/ipc_messages_logger.cpp")
 add_dependencies (ServerConnector SERVER_CONNECTOR_EDL)
 

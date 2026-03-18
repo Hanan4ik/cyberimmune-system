@@ -32,8 +32,6 @@ execute {
 
 /* Request messages */
 request {
-    match interface=drone_controller.Initialization method=WaitForInit { grant () }
-
     match dst=drone_controller.AutopilotConnector interface=drone_controller.AutopilotConnectorInterface {
         match src=drone_controller.FlightController { grant () }
     }
@@ -71,8 +69,6 @@ request {
 
 /* Response messages */
 response {
-    match interface=drone_controller.Initialization method=WaitForInit { grant () }
-
     match src=drone_controller.AutopilotConnector interface=drone_controller.AutopilotConnectorInterface {
         match dst=drone_controller.FlightController { grant () }
     }

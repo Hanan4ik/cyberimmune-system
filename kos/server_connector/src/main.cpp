@@ -11,7 +11,6 @@
 
 #include "../include/server_connector.h"
 #include "../../shared/include/initialization_interface.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,11 +99,6 @@ public:
  * получает IPC-сообщения от других компонентов модуля безопасности, исполняет запрашиваемые действияи отправляет IPC-ответы.
  */
 int main(void) {
-    while (!waitForInit("logger_connection", "Logger")) {
-        logEntry("Failed to receive initialization notification from Logger. Trying again in 1s", ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(1);
-    }
-
     if (!initServerConnector())
         return EXIT_FAILURE;
 

@@ -4,8 +4,6 @@
 
 - [Структура полетного контроллера KOS](#структура-полетного-контроллера-kos)
 - [IPC-сообщения](#ipc-сообщения)
-  - [ipc_messages_initialization](#ipc_messages_initialization)
-    - [waitForInit()](#int-waitforinitconst-char-connection-const-char-receiverentity)
   - [ipc_messages_autopilot_connector](#ipc_messages_autopilot_connector)
     - [waitForArmRequest()](#int-waitforarmrequest)
     - [permitArm()](#int-permitarm)
@@ -53,15 +51,6 @@
 ## IPC-сообщения
 
 Папка shared содержит файлы с функциями-обертками, облегчающими отправку IPC-сообщений. Файлы соответствуют модулям, для которгго предназачены сообщения. Все функции-обертки возвращают цифровое значение: **1** в случае успешной отправки и получении ответа, **0**  в ином случае.
-
-### `ipc_messages_initialization`
-
-Содержит универсальное сообщение, воспринимаемое модулями AutopilotConnector, CredentialManager, Logger,
-NavigationSystem, PeripheryController и ServerConnector.
-
-#### `int waitForInit(const char* connection, const char* receiverEntity)`
-
-Ожидает инициализации указанного модуля. Требует указания имени модуля и имени соединения, по которому будет отправлено сообщение.
 
 ### `ipc_messages_autopilot_connector`
 

@@ -12,7 +12,6 @@
  */
 
 #include "../include/navigation_system.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 
 #include <coresrv/hal/hal_api.h>
 #include <rtl/retcode_hr.h>
@@ -475,11 +474,6 @@ void getSensors() {
 }
 
 int initNavigationSystem() {
-    while (!waitForInit("periphery_controller_connection", "PeripheryController")) {
-        logEntry("Failed to receive initialization notification from Periphery Controller. Trying again in 1s", ENTITY_NAME, LogLevel::LOG_WARNING);
-        sleep(1);
-    }
-
     char boardName[NAME_MAX_LENGTH] = {0};
     if (KnHalGetEnv("board", boardName, sizeof(boardName)) != rcOk) {
         logEntry("Failed to get board name", ENTITY_NAME, LogLevel::LOG_ERROR);

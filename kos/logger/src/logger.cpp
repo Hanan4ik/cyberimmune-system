@@ -10,7 +10,6 @@
  */
 
 #include "../include/logger.h"
-#include "../../shared/include/ipc_messages_initialization.h"
 #include "../../shared/include/ipc_messages_server_connector.h"
 
 #include <stdio.h>
