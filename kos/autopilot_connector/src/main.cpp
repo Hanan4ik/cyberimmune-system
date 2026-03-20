@@ -10,118 +10,11 @@
 #include <kosipc/make_application.h>
 #include <kosipc/serve_static_channel.h>
 
-#include "../include/autopilot_connector.h"
-#include "../../shared/include/initialization_interface.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <thread>
-
-#define NK_USE_UNQUALIFIED_NAMES
-#include <drone_controller/AutopilotConnector.edl.cpp.h>
-
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
+#include "../include/autopilot_connector_interface.h"
 
 /** \cond */
 std::thread listenThread;
 /** \endcond */
-class IAutopilotConnector : public AutopilotConnectorInterface
-{
-public:
-    void WaitForArmRequest(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = isArmRequested();
-
-    }
-
-    void PermitArm(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::ArmPermit);
-
-    }
-
-    void ForbidArm(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::ArmForbid);
-
-    }
-
-    void PauseFlight(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::PauseFlight);
-
-    }
-
-    void ResumeFlight(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::ResumeFlight);
-
-    }
-
-    void AbortMission(
-            uint8_t& success                    //  out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::AbortMission);
-
-    }
-
-    void ChangeSpeed(
-            int32_t speed,                      // in SInt32 speed
-            uint8_t& success                    // out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::ChangeSpeed, speed);
-
-    }
-
-    void ChangeAltitude(
-            int32_t altitude,                   // in SInt32 altitude
-            uint8_t& success                    // out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(AutopilotCommand::ChangeAltitude, altitude);
-
-    }
-
-    void ChangeWaypoint(
-            int32_t latitude,                   // in SInt32 latitude
-            int32_t longitude,                  // in SInt32 longitude
-            int32_t altitude,                   // in SInt32 altitude
-            uint8_t& success                    // out UInt8 success
-            ) {
-
-        success = sendAutopilotCommand(
-                AutopilotCommand::ChangeWaypoint,
-                latitude,
-                longitude,
-                altitude
-                );
-
-    }
-
-    void SetMission(
-            const std::vector<uint8_t>& mission,// in sequence<UInt8, MaxMissionLength> mission
-            uint32_t size,                      // in UInt32 size
-            uint8_t& success                    // out UInt8 success
-            ) {
-
-        uint8_t m[MaxMissionLength] = {0};
-        std::memcpy(m, mission.data(), mission.size());
-        success = sendAutopilotCommand(AutopilotCommand::SetMission, m, size);
-    }
-};
 
 /**
  * \~English \brief AutopilotConnector component main program entry point.

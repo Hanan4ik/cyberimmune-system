@@ -5,7 +5,6 @@
  */
 
 #include "../include/flight_controller.h"
-#include "../../shared/include/initialization_interface.h"
 #include "../../shared/include/ipc_messages_autopilot_connector.h"
 #include "../../shared/include/ipc_messages_credential_manager.h"
 #include "../../shared/include/ipc_messages_navigation_system.h"

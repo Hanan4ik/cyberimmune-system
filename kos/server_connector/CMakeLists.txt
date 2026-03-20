@@ -10,13 +10,8 @@ else()
     set (SERVER_CONNECTOR_SRC "src/server_connector_offline.cpp")
 endif()
 
-add_executable (ServerConnector
-    "src/main.cpp"
-    "src/server_connector.cpp"
-    ${SERVER_CONNECTOR_SRC}
-    "src/server_connector_interface.cpp"
-    "../shared/src/initialization_interface.cpp"
-    "../shared/src/ipc_messages_logger.cpp")
+add_executable (ServerConnector "src/main.cpp" "src/server_connector.cpp"
+    ${SERVER_CONNECTOR_SRC} "../shared/src/ipc_messages_logger.cpp")
 add_dependencies (ServerConnector SERVER_CONNECTOR_EDL)
 
 target_compile_definitions (ServerConnector PRIVATE ENTITY_NAME="Server Connector")

@@ -7,18 +7,14 @@
 #include <string>
 #include <iostream>
 #include <kosipc/api.h>
-
 #include "../include/ipc_messages_navigation_system.h"
 
 #define NK_USE_UNQUALIFIED_NAMES
 #include <drone_controller/NavigationSystemInterface.idl.cpp.h>
 
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
-
+using namespace kosipc::stdcpp::drone_controller;
 
 int getCoords(int32_t &latitude, int32_t &longitude, int32_t &altitude) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -27,18 +23,15 @@ int getCoords(int32_t &latitude, int32_t &longitude, int32_t &altitude) {
     try {
         proxy->GetCoords(success, latitude, longitude, altitude);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->GetCoords request" << std::endl;
         return 0;
     }
 
     return success;
-
 }
 
 int getGpsInfo(float& dop, int32_t& sats) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -48,8 +41,7 @@ int getGpsInfo(float& dop, int32_t& sats) {
     try {
         proxy->GetGpsInfo(success, d, sats);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->GetGpsInfo request" << std::endl;
         return 0;
     }
@@ -57,11 +49,9 @@ int getGpsInfo(float& dop, int32_t& sats) {
     std::memcpy(&dop, &d, sizeof(float));
 
     return success;
-
 }
 
 int getEstimatedSpeed(float& speed) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -71,8 +61,7 @@ int getEstimatedSpeed(float& speed) {
     try {
         proxy->GetSpeed(success, s);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->GetSpeed request" << std::endl;
         return 0;
     }
@@ -80,5 +69,4 @@ int getEstimatedSpeed(float& speed) {
     std::memcpy(&speed, &s, sizeof(float));
 
     return success;
-
 }

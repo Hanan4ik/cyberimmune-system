@@ -10,10 +10,9 @@ else ()
     set (NAVIGATION_SYSTEM_SRC "src/navigation_system_real.cpp")
 endif ()
 
-add_executable (NavigationSystem "src/main.cpp" "src/navigation_system.cpp" ${NAVIGATION_SYSTEM_SRC}
-    "src/navigation_system_interface.cpp" "../shared/src/initialization_interface.cpp"
-    "../shared/src/ipc_messages_server_connector.cpp"
-    "../shared/src/ipc_messages_logger.cpp")
+add_executable (NavigationSystem "src/main.cpp" "src/navigation_system.cpp"
+    ${NAVIGATION_SYSTEM_SRC} "../shared/src/ipc_messages_logger.cpp"
+    "../shared/src/ipc_messages_server_connector.cpp")
 add_dependencies (NavigationSystem NAVIGATION_SYSTEM_EDL)
 
 target_compile_definitions (NavigationSystem PRIVATE ENTITY_NAME="Navigation System")

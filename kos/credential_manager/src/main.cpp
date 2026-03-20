@@ -9,51 +9,8 @@
 #include <kosipc/make_application.h>
 #include <kosipc/serve_static_channel.h>
 
-#include "../include/credential_manager.h"
-#include "../../shared/include/initialization_interface.h"
+#include "../include/credential_manager_interface.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#define NK_USE_UNQUALIFIED_NAMES
-#include <drone_controller/CredentialManager.edl.cpp.h>
-
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
-
-
-class ICredentialManager : public CredentialManagerInterface
-{
-public:
-    void SignMessage(
-            const std::string& message,         // in string<MaxMessageLength> message
-            uint8_t& success,                   // out UInt8 success
-            std::string& signature              // out string<MaxSignatureLength> signature
-            ) {
-
-        //TODO: Rewrite to cpp way
-        char m[MaxMessageLength + 1] = {0};
-        char s[MaxSignatureLength + 1] = {0};
-        message.copy(m, message.size() + 1);
-        success = getMessageSignature(m, s);
-        signature = std::string(s);
-
-    }
-
-    void CheckSignature(
-            const std::string& message,         // in string<MaxMessageLength> message
-            uint8_t& success,                   // out UInt8 success
-            uint8_t& correct                    // out UInt8 correct
-            ) {
-
-        //TODO: Rewrite to cpp way
-        char m[MaxMessageLength + 1] = {0};
-        message.copy(m, message.size() + 1);
-        success = checkMessageSignature(m, correct);
-
-    }
-};
 /**
  * \~English \brief CredentialManager component main program entry point.
  * \details First, waits for the Logger component to initialize. After that, the saved RSA key

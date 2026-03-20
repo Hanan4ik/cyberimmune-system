@@ -4,62 +4,14 @@
  * \~Russian \brief Реализация основного цикла компонента PeripheryController модуля безопасности.
  */
 
+ #include <unistd.h>
 #include <string>
 #include <iostream>
 #include <kosipc/make_application.h>
 #include <kosipc/serve_static_channel.h>
 
-#include "../include/periphery_controller.h"
-#include "../../shared/include/initialization_interface.h"
+#include "../include/periphery_controller_interface.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#define NK_USE_UNQUALIFIED_NAMES
-#include <drone_controller/PeripheryController.edl.cpp.h>
-
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
-
-
-class IPeripheryController : public PeripheryControllerInterface
-{
-public:
-    void EnableBuzzer(
-            uint8_t& success                    // out UInt8 success
-            ){
-
-        success = startBuzzer();
-
-    }
-    void SetKillSwitch(
-            uint8_t enable,                     // in UInt8 enable
-            uint8_t& success                    // out UInt8 success
-            ){
-
-        success = setKillSwitch(enable);
-
-    }
-    void SetCargoLock(
-            uint8_t enable,                     // in UInt8 enable
-            uint8_t& success                    // out UInt8 success
-            ){
-
-        success = setCargoLock(enable);
-
-    }
-    void ScanRfid(
-            std::string& tag,                   // out string<MaxTagLength> tag
-            uint8_t& success                    // out UInt8 success
-            ){
-
-        //TODO: Rewrite to cpp way
-        char t[MaxTagLength + 1] = {0};
-        success = readRfid(t);
-        tag = std::string(t);
-    }
-};
 /**
  * \~English \brief PeripheryController component main program entry point.
  * \details First, waits for the Logger component to initialize. After that,

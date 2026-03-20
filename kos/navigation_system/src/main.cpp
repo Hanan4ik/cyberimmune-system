@@ -4,67 +4,20 @@
  * \~Russian \brief Реализация основного цикла компонента NavigationSystem модуля безопасности.
  */
 
+#include <unistd.h>
 #include <string>
 #include <cstring>
 #include <iostream>
 #include <kosipc/make_application.h>
 #include <kosipc/serve_static_channel.h>
 
-#include "../include/navigation_system.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <thread>
-
-#define NK_USE_UNQUALIFIED_NAMES
-#include <drone_controller/NavigationSystem.edl.cpp.h>
-
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
+#include "../include/navigation_system_interface.h"
 
 /** \cond */
 std::thread sensorThread;
 std::thread senderThread;
 /** \endcond */
 
-class INavigationSystem : public NavigationSystemInterface
-{
-public:
-    void GetCoords(
-            uint8_t& success,                   // out UInt8 success
-            int32_t& lat,                       // out SInt32 lat
-            int32_t& lng,                       // out SInt32 lng
-            int32_t& alt                        // out SInt32 alt
-            ) {
-
-        success = getPosition(lat, lng, alt);
-
-    }
-
-    void GetGpsInfo(
-            uint8_t& success,                   // out UInt8 success
-            int32_t& dop,                       // out SInt32 dop
-            int32_t& sats                       // out SInt32 sats
-            ) {
-
-        float d;
-        success = getInfo(d, sats);
-        std::memcpy(&dop, &d, sizeof(float));
-
-    }
-
-    void GetSpeed(
-            uint8_t& success,                   // out UInt8 success
-            int32_t& speed                      // out SInt32 speed
-            ) {
-
-        float s;
-        success = getSpeed(s);
-        std::memcpy(&speed, &s, sizeof(float));
-
-    }
-};
 /**
  * \~English \brief AutopilotConnector component main program entry point.
  * \details First, waits for the Logger component to initialize. After that,

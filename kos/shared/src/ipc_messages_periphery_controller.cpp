@@ -13,12 +13,9 @@
 #define NK_USE_UNQUALIFIED_NAMES
 #include <drone_controller/PeripheryControllerInterface.idl.cpp.h>
 
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
-
+using namespace kosipc::stdcpp::drone_controller;
 
 int enableBuzzer() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -27,18 +24,15 @@ int enableBuzzer() {
     try {
         proxy->EnableBuzzer(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->EnableBuzzer request" << std::endl;
         return 0;
     }
 
     return success;
-
 }
 
 int setKillSwitch(uint8_t enable) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -47,18 +41,15 @@ int setKillSwitch(uint8_t enable) {
     try {
         proxy->SetKillSwitch(enable, success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->SetKillSwitch request" << std::endl;
         return 0;
     }
 
     return success;
-
 }
 
 int setCargoLock(uint8_t enable) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -67,14 +58,12 @@ int setCargoLock(uint8_t enable) {
     try {
         proxy->SetCargoLock(enable, success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->SetCargoLock request" << std::endl;
         return 0;
     }
 
     return success;
-
 }
 
 int scanRfid(char* tag) {
@@ -90,8 +79,7 @@ int scanRfid(char* tag) {
     try {
         proxy->ScanRfid(tagFound, success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Exception on proxy->ScanRfid request" << std::endl;
         return 0;
     }

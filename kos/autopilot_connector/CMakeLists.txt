@@ -10,9 +10,9 @@ else()
     set (AUTOPILOT_CONNECTOR_SRC "src/autopilot_connector_real.cpp")
 endif()
 
-add_executable (AutopilotConnector "src/main.cpp" ${AUTOPILOT_CONNECTOR_SRC} "src/autopilot_connector_interface.cpp"
-    "src/autopilot_connector.cpp" "../shared/src/initialization_interface.cpp"
-    "../shared/src/ipc_messages_logger.cpp" "../shared/src/ipc_messages_server_connector.cpp")
+add_executable (AutopilotConnector "src/main.cpp" ${AUTOPILOT_CONNECTOR_SRC}
+    "src/autopilot_connector.cpp" "../shared/src/ipc_messages_logger.cpp"
+    "../shared/src/ipc_messages_server_connector.cpp")
 add_dependencies (AutopilotConnector AUTOPILOT_CONNECTOR_EDL AUTOPILOT_CONNECTOR_IDL)
 
 target_compile_definitions (AutopilotConnector PRIVATE ENTITY_NAME="Autopilot Connector")

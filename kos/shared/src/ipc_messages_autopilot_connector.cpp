@@ -10,9 +10,7 @@
 #include <string>
 #include <thread>
 #include <vector>
-
 #include <kosipc/api.h>
-
 
 #include "../include/ipc_messages_autopilot_connector.h"
 
@@ -20,37 +18,33 @@
 #include <drone_controller/AutopilotConnectorInterface.idl.cpp.h>
 
 using namespace std::chrono_literals;
-using namespace kosipc::stdcpp;
-using namespace drone_controller;
-
+using namespace kosipc::stdcpp::drone_controller;
 
 int waitForArmRequest() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
     auto proxy              = app.MakeProxy<AutopilotConnectorInterface>(kosipc::ConnectStaticChannel("autopilot_connector_connection", "interface"));
+
     while (true) {
         try {
             proxy->WaitForArmRequest(success);
         }
-        catch (...)
-        {
+        catch (...) {
             std::cerr << "Error in waitForArmRequest" << std::endl;
             return 1;
         }
-        if (!success) {
+
+        if (!success)
             return 1;
-        }
+
         std::this_thread::sleep_for(1000ms);
     }
 
     return 0;
-
 }
 
 int permitArm() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -58,18 +52,15 @@ int permitArm() {
     try {
         proxy->PermitArm(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in permitArm" << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int forbidArm() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -78,18 +69,15 @@ int forbidArm() {
     try {
         proxy->ForbidArm(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in forbidArm" << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int pauseFlight() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -98,18 +86,15 @@ int pauseFlight() {
     try {
         proxy->PauseFlight(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in pauseFlight" << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int resumeFlight() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -118,19 +103,15 @@ int resumeFlight() {
     try {
         proxy->ResumeFlight(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in resumeFlight" << std::endl;
         return 1;
     }
 
-
     return success;
-
 }
 
 int abortMission() {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -139,18 +120,15 @@ int abortMission() {
     try {
         proxy->AbortMission(success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in abortMission" << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int changeSpeed(int32_t speed) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -159,18 +137,15 @@ int changeSpeed(int32_t speed) {
     try {
         proxy->ChangeSpeed(speed, success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in changeSpeed: speed=" << speed << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int changeAltitude(int32_t altitude) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -179,18 +154,15 @@ int changeAltitude(int32_t altitude) {
     try {
         proxy->ChangeAltitude(altitude, success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in changeAltitude: altitude=" << altitude << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int changeWaypoint(int32_t latitude, int32_t longitude, int32_t altitude) {
-
     //TODO: rewrite without PureClient
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -199,21 +171,15 @@ int changeWaypoint(int32_t latitude, int32_t longitude, int32_t altitude) {
     try {
         proxy->ChangeWaypoint(latitude, longitude, altitude, success);
     }
-    catch (...)
-    {
-        std::cerr << "Error in changeWaypoint: latitude=" << latitude 
-            << ", longitude=" << longitude
-            << ", altitude=" << altitude
-            << std::endl;
+    catch (...) {
+        std::cerr << "Error in changeWaypoint: latitude=" << latitude << ", longitude=" << longitude << ", altitude=" << altitude << std::endl;
         return 1;
     }
 
     return success;
-
 }
 
 int setMission(uint8_t* mission, uint32_t missionSize) {
-
     //TODO: rewrite without PureClient and ugly sizeof
     uint8_t success;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
@@ -223,12 +189,10 @@ int setMission(uint8_t* mission, uint32_t missionSize) {
     try {
         proxy->SetMission(m, m.size(), success);
     }
-    catch (...)
-    {
+    catch (...) {
         std::cerr << "Error in setMission" << std::endl;
         return 1;
     }
 
     return success;
-
 }
