@@ -5,6 +5,7 @@ use kl.Ntpd._
 /* Including EDL files */
 use EDL Einit
 use EDL kl.core.Core
+use EDL kl.core.DCM
 use EDL drone_controller.AutopilotConnector
 use EDL drone_controller.CredentialManager
 use EDL drone_controller.FlightController
@@ -16,6 +17,8 @@ use EDL drone_controller.KlogEntity
 use EDL drone_controller.KlogStorageEntity
 use EDL kl.drivers.UART
 use EDL wpa.WpaSupplicant
+use EDL logrr.LogrrServer
+use EDL logrr.LogrrFsOutputChannel
 
 /* Execution of entities */
 execute {
@@ -58,13 +61,19 @@ request {
     }
 
     match dst=drone_controller.Logger interface=drone_controller.LoggerInterface method=Log { grant () }
+    match dst=logrr.LogrrServer src=drone_controller.Logger { grant() }
 
-   match src=drone_controller.KlogEntity dst=drone_controller.KlogStorageEntity { grant() }
-   match src=drone_controller.KlogEntity dst=kl.core.Core { grant() }
-   match src=drone_controller.KlogStorageEntity dst=drone_controller.KlogEntity { grant() }
-   match src=drone_controller.KlogStorageEntity dst=kl.core.Core { grant() }
-   match src=kl.core.Core dst=drone_controller.KlogEntity { grant() }
-   match src=kl.core.Core dst=drone_controller.KlogStorageEntity { grant() }
+    match src=drone_controller.KlogEntity dst=drone_controller.KlogStorageEntity { grant() }
+    match src=drone_controller.KlogEntity dst=kl.core.Core { grant() }
+    match src=drone_controller.KlogStorageEntity dst=drone_controller.KlogEntity { grant() }
+    match src=drone_controller.KlogStorageEntity dst=kl.core.Core { grant() }
+    match src=kl.core.Core dst=drone_controller.KlogEntity { grant() }
+    match src=kl.core.Core dst=drone_controller.KlogStorageEntity { grant() }
+
+    match dst=kl.core.DCM { grant() }
+    match src=kl.rump.Dhcpcd { grant () }
+    match src=logrr.LogrrServer { grant () }
+    match src=logrr.LogrrFsOutputChannel { grant () }
 }
 
 /* Response messages */
@@ -95,13 +104,19 @@ response {
     }
 
     match src=drone_controller.Logger interface=drone_controller.LoggerInterface method=Log { grant () }
+    match src=logrr.LogrrServer dst=drone_controller.Logger { grant() }
 
-   match dst=drone_controller.KlogEntity src=drone_controller.KlogStorageEntity { grant() }
-   match dst=drone_controller.KlogEntity src=kl.core.Core { grant() }
-   match dst=drone_controller.KlogStorageEntity src=drone_controller.KlogEntity { grant() }
-   match dst=drone_controller.KlogStorageEntity src=kl.core.Core { grant() }
-   match dst=kl.core.Core src=drone_controller.KlogEntity { grant() }
-   match dst=kl.core.Core src=drone_controller.KlogStorageEntity { grant() }
+    match dst=drone_controller.KlogEntity src=drone_controller.KlogStorageEntity { grant() }
+    match dst=drone_controller.KlogEntity src=kl.core.Core { grant() }
+    match dst=drone_controller.KlogStorageEntity src=drone_controller.KlogEntity { grant() }
+    match dst=drone_controller.KlogStorageEntity src=kl.core.Core { grant() }
+    match dst=kl.core.Core src=drone_controller.KlogEntity { grant() }
+    match dst=kl.core.Core src=drone_controller.KlogStorageEntity { grant() }
+
+    match src=kl.core.DCM { grant() }
+    match dst=kl.rump.Dhcpcd { grant () }
+    match dst=logrr.LogrrServer { grant () }
+    match dst=logrr.LogrrFsOutputChannel { grant () }
 }
 
 /* Error calls */

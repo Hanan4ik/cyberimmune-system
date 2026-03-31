@@ -2,6 +2,11 @@ project (einit)
 
 include (platform/image)
 
+find_package (logrr_server REQUIRED)
+find_package (logrr_fs_output_channel REQUIRED)
+include (logrr_server/configure)
+include (logrr_fs_output_channel/configure)
+
 project_header_default ("STANDARD_GNU_11:YES" "STRICT_WARNINGS:YES")
 
 find_package(kss REQUIRED)
@@ -35,8 +40,25 @@ set (ENTITIES
         precompiled_vfs::VfsSdCardFs
         precompiled_vfs::VfsNet
         ${NTPD_ENTITY}
-        KlogStorageEntity)
+        KlogStorageEntity
+        logrr_server::LogrrServer
+        logrr_fs_output_channel::LogrrFsOutputChannel)
 set (FILES)
+
+set (LOG_LEVEL INFO)
+create_logrr_server (ENTITY_NAME "LogrrServer"
+                    VFS_CONN_ID "kl.VfsSdCardFs"
+                    OUTPUT_CHANNELS "logrr.LogrrFsOutputChannel"
+                    LOG_LEVEL INFO
+                    RECV_CORE_LOGS
+                    WRITE_TO_CORE ON)
+create_logrr_fs_output_channel (ENTITY_NAME "LogrrFsOutputChannel"
+                                SERVER_TARGET "logrr_server::LogrrServer"
+                                VFS_CONN_ID "kl.VfsSdCardFs"
+                                LOG_DIR "/logs")
+connect_to_logrr_server (SERVER_TARGET logrr_server::LogrrServer ENTITIES FlightController)
+
+project_header_default ("STANDARD_GNU_11:YES" "STRICT_WARNINGS:NO")
 
 set_target_properties (precompiled_vfs::VfsSdCardFs PROPERTIES
     EXTRA_ARGS "

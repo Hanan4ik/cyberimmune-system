@@ -12,11 +12,31 @@
 #include "../include/logger.h"
 #include "../../shared/include/ipc_messages_server_connector.h"
 
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <cstdio>
+#include <filesystem>
+#include <component/logrr/cpp/logger.h>
+
+/** \cond */
+bool serverIsReady = false;
+char logMessage[1024] = {0};
+/** \endcond */
+
 int createLog() {
+    if (std::filesystem::exists("/logs/apps/Drone Controller/Drone Controller.log")) {
+        int count = std::distance(std::filesystem::directory_iterator("/logs/apps/Drone Controller"),
+            std::filesystem::directory_iterator{});
+        char newFileName[64] = {0};
+        snprintf(newFileName, 64, "/logs/apps/Drone Controller/prev_%d.log", count);
+        std::rename("/logs/apps/Drone Controller/Drone Controller.log", newFileName);
+        std::remove("/logs/apps/Drone Controller/Drone Controller.log");
+    }
+
+    logrr::Init("Drone Controller");
     return 1;
 }
 
@@ -24,25 +44,40 @@ int addLogEntry(char* entry, int level) {
     char logHeader[32] = {0};
     switch (level) {
     case 0:
-        strcpy(logHeader, "[TRACE]");
+        LOG(TRACE, entry);
+        strcpy(logHeader, "[Trace]");
         break;
     case 1:
-        strcpy(logHeader, "[DEBUG]");
+        LOG(DEBUG, entry);
+        strcpy(logHeader, "[Debug]");
         break;
     case 2:
-        strcpy(logHeader, "[INFO]");
+        LOG(INFO, entry);
+        strcpy(logHeader, "[Info]");
         break;
     case 3:
-        strcpy(logHeader, "[WARNING]");
+        LOG(WARNING, entry);
+        strcpy(logHeader, "[Warning]");
         break;
     case 4:
-        strcpy(logHeader, "[ERROR]");
+        LOG(ERROR, entry);
+        strcpy(logHeader, "[Error]");
         break;
     case 5:
-        strcpy(logHeader, "[CRITICAL]");
+        LOG(CRITICAL, entry);
+        strcpy(logHeader, "[Critical]");
         break;
     }
-    fprintf(stderr, "%s %s\n", logHeader, entry);
+
+    if (serverIsReady) {
+        time_t now = time(NULL);
+        char timeStr[32] = {0};
+        strftime(timeStr, 32, "[%Y-%m-%d %H:%M:%S]", localtime(&now));
+        snprintf(logMessage, 1024, "log=%s %s %s", timeStr, logHeader, entry);
+        publishMessage("api/logs", logMessage);
+    }
+    else if (strstr(entry, "[Server Connector] Initialization is finished"))
+        serverIsReady = true;
 
     return 1;
 }

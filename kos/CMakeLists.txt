@@ -62,11 +62,8 @@ find_package (MbedTLS REQUIRED COMPONENTS)
 include_directories (${MbedTLS_INCLUDE})
 
 set (fmt_USE_STATIC ON)
-set (spdlog_USE_STATIC ON)
 set (fdn_USE_STATIC ON)
-set (logger_USE_STATIC ON)
-include_directories (${koslogger_INCLUDE})
-find_package (logger REQUIRED)
+find_package (logrr_cpp REQUIRED)
 
 if (UNIT_TESTS)
     add_nk_edl (UNIT_TESTS_EDL  "${CMAKE_SOURCE_DIR}/resources/UnitTests.edl"

@@ -7,5 +7,4 @@ add_executable (Logger "src/main.cpp" "src/logger.cpp"
 
 add_dependencies (Logger LOGGER_EDL LOGGER_IDL)
 target_compile_definitions (Logger PRIVATE ENTITY_NAME="Logger")
-target_compile_features (Logger PRIVATE cxx_std_17)
-bind_nk_targets (Logger vfs::client LOGGER_EDL LOGGER_IDL)
+bind_nk_targets (Logger vfs::client logrr_cpp::logrr_cpp-static LOGGER_EDL LOGGER_IDL)
