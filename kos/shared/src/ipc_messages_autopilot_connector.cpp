@@ -35,7 +35,7 @@ int waitForArmRequest() {
             return 1;
         }
 
-        if (!success)
+        if (success)
             return 1;
 
         std::this_thread::sleep_for(1000ms);
