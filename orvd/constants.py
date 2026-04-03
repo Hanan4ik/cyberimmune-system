@@ -78,6 +78,7 @@ class APIRoute:
     GET_ALL_FORBIDDEN_ZONES = '/api/get_all_forbidden_zones'
     GET_FORBIDDEN_ZONES_DELTA = '/api/get_forbidden_zones_delta'
     FORBIDDEN_ZONES_HASH = '/api/forbidden_zones_hash'
+    KOS_KEY = '/api/kos_key'
 
 class AdminRoute:
     INDEX = '/admin'

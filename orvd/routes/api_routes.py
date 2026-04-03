@@ -12,6 +12,7 @@ from utils import (
 from handlers.api_handlers import (
     key_kos_exchange_handler, auth_handler, get_all_forbidden_zones_handler,
     get_forbidden_zones_delta_handler, get_forbidden_zones_hash_handler,
+    kos_key_handler,
 )
 from handlers.admin_handlers import (
     admin_auth_handler, arm_decision_handler, force_disarm_handler,
@@ -1500,8 +1501,32 @@ def forbidden_zones_hash():
                               query_str=f'{APIRoute.FORBIDDEN_ZONES_HASH}?id={id}', key_group=f'{KeyGroup.KOS}{id}', sig=sig, id=id)
     else:
         return bad_request('Wrong id')
-      
-      
+
+
+@bp.route(APIRoute.KOS_KEY)
+def kos_key():
+    """
+    Возвращает открытый ключ KOS для заданного id.
+    ---
+    tags:
+      - api
+    parameters:
+      - name: target_id
+        in: query
+        type: string
+        required: true
+        description: Идентификатор БПЛА.
+    responses:
+      200:
+        description: Строка с открытым ключом KOS (hex, без 0x) или $Key: NOT_FOUND.
+        schema:
+          type: string
+          example: "$Key: {n} {e}"
+    """
+    target_id = request.args.get('target_id')
+    return regular_request(handler_func=kos_key_handler, target_id=target_id)
+
+
 @bp.route(AdminRoute.EXPORT_FORBIDDEN_ZONES)
 def export_forbidden_zones():
     """
