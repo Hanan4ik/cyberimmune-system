@@ -16,6 +16,7 @@ add_dependencies (ServerConnector SERVER_CONNECTOR_EDL)
 
 target_compile_definitions (ServerConnector PRIVATE ENTITY_NAME="Server Connector")
 target_compile_definitions (ServerConnector PRIVATE BOARD_ID="${BOARD_ID}")
+target_compile_definitions (ServerConnector PRIVATE PARTNER_ID="${PARTNER_ID}")
 
 if (SERVER)
     target_compile_definitions (ServerConnector PRIVATE 

@@ -117,11 +117,7 @@ int initServerConnector() {
     subscriber->subscribe(NULL, topic);
     snprintf(topic, 64, "api/rfid/response/%s", boardName);
     subscriber->subscribe(NULL, topic);
-#ifdef IS_INSPECTOR
-    snprintf(topic, 64, "api/dm/deliverer/recv/%s", boardName);
-#else
-    snprintf(topic, 64, "api/dm/inspector/recv/%s", boardName);
-#endif
+    snprintf(topic, 64, "api/dm/%s/%s", boardName, PARTNER_ID);
     subscriber->subscribe(NULL, topic);
     subscriber->subscribe(NULL, "api/forbidden_zones");
     subscriberThread = std::thread([&](){ subscriber->loop_forever(); });

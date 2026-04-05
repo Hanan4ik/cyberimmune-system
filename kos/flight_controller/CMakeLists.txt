@@ -17,5 +17,5 @@ else ()
 endif()
 
 target_compile_definitions (FlightController PRIVATE ENTITY_NAME="Flight Controller")
-target_compile_definitions (CredentialManager PRIVATE PARTNER_ID="${PARTNER_ID}")
+target_compile_definitions (FlightController PRIVATE PARTNER_ID="${PARTNER_ID}")
 bind_nk_targets (FlightController MbedTLS::mbedtls ${CMAKE_THREAD_LIBS_INIT} FLIGHT_CONTROLLER_EDL)

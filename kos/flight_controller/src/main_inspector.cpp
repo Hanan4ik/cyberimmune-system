@@ -322,9 +322,9 @@ int main(void) {
     //If the response contains "$TRUE#" than the tag is cargo destination, and "$FALSE#" otherwise
 
     /* Send message to deliverer */
-    //Calculate a signature for message "message={Message}".
-    //Content of 'Message' is not specified and can be in any form.
-    //Send message "message={Message}&sig={Signature}" to the topic "api/dm/{PARTNER_ID}" with 'publishMessage'.
+    //Calculate a signature for your message {Message} with 'signMessage'.
+    //Content of {Message} is not specified and can be in any form.
+    //Send message "{Message}#{Signature}" to the topic "api/dm/{PARTNER_ID}" with 'publishMessage'.
 
     while (true)
         sleep(1000);

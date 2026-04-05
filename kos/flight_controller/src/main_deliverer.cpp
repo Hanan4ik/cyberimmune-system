@@ -233,13 +233,12 @@ int main(void) {
 
     //Here, the message from the inspector should be received and parsed.
     //Message can be received with
-    //    receiveSubscription("api/dm/{PARTNER_ID}/", subscriptionBuffer, bufferSize).
+    //    receiveSubscription("api/dm/{boardId}/{PARTNER_ID}", subscriptionBuffer, bufferSize).
     //If there was no message, the buffer will be empty.
     //Next, the authenticity of the message should be checked with
     //    checkSignature(subscriptionBuffer, MessageSource::PARTNER_DRONE, authenticity).
-    //If authenticity is returned as 'True' than the message was ineed sent by the inspector
-    //Than the message must be parsed.
-    //An actual content starts after "message=" and ends with "#".
+    //If authenticity is returned as 'True' than the message was indeed sent by the inspector.
+    //Than the message must be parsed: content starts from the first symbol and ends with "#".
     //Mission will not be received from the server.
     //Instead it should be generated here and approved by the server with 'askForMissionApproval' function.
 
