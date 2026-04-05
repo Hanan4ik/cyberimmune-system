@@ -115,15 +115,17 @@ int initServerConnector() {
     subscriber->subscribe(NULL, topic);
     snprintf(topic, 64, "api/nmission/response/%s", boardName);
     subscriber->subscribe(NULL, topic);
-    snprintf(topic, 64, "api/rfid/response/%s", boardName);
+    snprintf(topic, 64, "api/tag/response/%s", boardName);
+    subscriber->subscribe(NULL, topic);
+    snprintf(topic, 64, "api/image/response/%s", boardName);
     subscriber->subscribe(NULL, topic);
     snprintf(topic, 64, "api/dm/%s/%s", boardName, PARTNER_ID);
     subscriber->subscribe(NULL, topic);
     subscriber->subscribe(NULL, "api/forbidden_zones");
     subscriberThread = std::thread([&](){ subscriber->loop_forever(); });
 
-        return 1;
-    }
+    return 1;
+}
 
 int requestServer(char* query, char* response, uint32_t responseSize) {
     char request[BUFFER_SIZE] = {0};

@@ -62,13 +62,13 @@ public:
     }
 
 /**
- * \~English IPC message handler. See \ref scanRfid.
- * \~Russian Обработчик IPC-сообщения. См. \ref scanRfid.
+ * \~English IPC message handler. See \ref takePicture.
+ * \~Russian Обработчик IPC-сообщения. См. \ref takePicture.
  */
-    void ScanRfid(std::string& tag, uint8_t& success) {
+    void TakePicture(std::string& tag, uint8_t& success) {
         //TODO: Rewrite to cpp way
-        char t[MaxTagLength + 1] = {0};
-        success = readRfid(t);
+        char t[MaxPictureSize + 1] = {0};
+        success = takePicture(t);
         tag = std::string(t);
     }
 };

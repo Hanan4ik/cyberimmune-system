@@ -313,13 +313,23 @@ int main(void) {
     //If we get here, the drone is able to arm and start the mission
     //The flight is need to be controlled from now on
 
-    /* RFID Check */
-    //Scan RFID tag with 'scanRfid' function
-    //Calculate a signature for message "tag=%s", rfid with 'signMessage'
-    //Send message "tag=%s&sig=0x%s", tag, signature to the topic "api/rfid" with 'publishMessage'
-    //Receive the response from the topic "api/rfid/response/" with 'receiveSubscription'
-    //Signature of the received message can be checked with 'checkSignature'
-    //If the response contains "$TRUE#" than the tag is cargo destination, and "$FALSE#" otherwise
+    /* Tag Recognition */
+    //Tag recognition is done via AI-driven recognition server.
+    //First, the request should be done with 'requestRecognition' function.
+    //It takes picture with a camera and sends it to AI-driven recognition server.
+    //The response could be received with 'getRecognitionResponse'.
+    //Note, that result may not be ready immediately.
+    //It returns recognized symbol or 'NONE' with an altitude value to take a better picture.
+
+    /* Delivery Point Determination */
+    //If the symbol is recognized it should be sent to the ORVD server.
+    //Calculate a signature for message tag={Tag} with 'signMessage'.
+    //Send message "tag={Tag}&sig=0x{signature}" to the topic "api/tag/request" with 'publishMessage'.
+    //Receive the response from the topic "api/tag/response/" with 'receiveSubscription'.
+    //Signature of the received message can be checked with 'checkSignature'.
+    //If the response contains "$TRUE {Tag}#" than the tag is cargo destination,
+    //if it contains "$FALSE {Tag}#", than the tag is not the destination point (or wrong tag),
+    //if it contains "$ACCEPTED {Tag}#", than the bonus tag was accepted.
 
     /* Send message to deliverer */
     //Calculate a signature for your message {Message} with 'signMessage'.

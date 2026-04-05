@@ -66,26 +66,26 @@ int setCargoLock(uint8_t enable) {
     return success;
 }
 
-int scanRfid(char* tag) {
+int takePicture(char* picture) {
     //TODO: rewrite without PureClient
     //TODO: make parameters names be the same between interfaces
     //scanResult vs tagFound
 
     uint8_t success;
-    std::string tagFound;
+    std::string takenPicture;
     kosipc::Application app = kosipc::MakeApplicationPureClient();
     auto proxy              = app.MakeProxy<PeripheryControllerInterface>(kosipc::ConnectStaticChannel("periphery_controller_connection", "interface"));
 
     try {
-        proxy->ScanRfid(tagFound, success);
+        proxy->TakePicture(takenPicture, success);
     }
     catch (...) {
-        std::cerr << "Exception on proxy->ScanRfid request" << std::endl;
+        std::cerr << "Exception on proxy->TakePicture request" << std::endl;
         return 0;
     }
 
     //TODO: make return code understandable
-    tagFound.copy(tag, tagFound.size() + 1);
+    takenPicture.copy(picture, takenPicture.size() + 1);
 
     return success;
 }

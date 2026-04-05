@@ -121,8 +121,8 @@ assert "PeripheryController" {
         grant response src=pc dst=fc endpoint=interface method=SetKillSwitch { success : 1 }
         grant fc ~> pc:interface.SetCargoLock { enable : 0 }
         grant response src=pc dst=fc endpoint=interface method=SetCargoLock { success : 1 }
-        grant fc ~> pc:interface.ScanRfid {}
-        grant response src=pc dst=fc endpoint=interface method=ScanRfid { tag : "tag", success : 1 }
+        grant fc ~> pc:interface.TakePicture {}
+        grant response src=pc dst=fc endpoint=interface method=TakePicture { tag : "tag", success : 1 }
     }
 }
 
