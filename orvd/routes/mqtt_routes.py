@@ -133,18 +133,21 @@ def direct_message(client, userdata, msg, **kwargs):
             print("Sender or receiver ID not found in topic for direct message.")
             return
 
-        query_string = msg.payload.decode()
-        query_params = parse_qs(query_string)
-        payload = {k: v[0] for k, v in query_params.items()}
+        message_with_sig = msg.payload.decode()
+        parts = message_with_sig.split('#')
         
-        message = payload.get('message')
-        sig = payload.get('sig')
+        if len(parts) != 2:
+            print(f"Invalid DM payload format: {message_with_sig}")
+            return
+        
+        message = parts[0]
+        sig = parts[1]
 
         if not message or not sig:
-            print(f"Invalid payload for DM: {query_string}")
+            print(f"Invalid payload for DM: {message_with_sig}")
             return
 
-        print(f"DM from {sender_id} to {receiver_id}: message")
+        print(f"DM from {sender_id} to {receiver_id}: {message}")
 
     except Exception as e:
         print(f"Error handling direct message: {e}")
