@@ -619,3 +619,19 @@ def set_change_forbidden_zones_coords_handler(lat_A: str, lon_A: str, lat_B: str
         context.change_forbidden_zones_C = {}
         
     return OK
+
+def get_uav_tag_handler(id: str):
+    """
+    Возвращает назначенный A тег для заданного id.
+
+    Args:
+        id (str): Идентификатор БПЛА.
+
+    Returns:
+        str: Назначенный тег или NOT_FOUND.
+    """
+    tag = context.uav_tag_map.get(id)
+    if tag:
+        return tag
+    else:
+        return NOT_FOUND

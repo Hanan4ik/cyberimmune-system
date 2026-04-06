@@ -121,6 +121,7 @@ class AdminRoute:
     SET_BREAK_COORDS = '/admin/set_break_coords'
     TOGGLE_CHANGE_FORBIDDEN_ZONES = '/admin/toggle_change_forbidden_zones'
     SET_CHANGE_FORBIDDEN_ZONES_COORDS = '/admin/set_change_forbidden_zones_coords'
+    GET_UAV_TAG = '/admin/get_uav_tag'
 
 class GeneralRoute:
     INDEX = '/'
