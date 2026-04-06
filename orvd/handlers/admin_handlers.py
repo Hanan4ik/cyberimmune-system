@@ -538,6 +538,8 @@ def get_all_data_handler():
 
         uav_data['delay'] = str(uav.delay)
 
+        uav_data['waiter'] = uav.id in context.arm_queue
+
         all_data['uav_data'][uav.id] = uav_data
 
     all_data['auto_revoke_permission_state'] = {
