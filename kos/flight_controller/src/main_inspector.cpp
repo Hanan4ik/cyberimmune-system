@@ -323,7 +323,7 @@ int main(void) {
 
     /* Delivery Point Determination */
     //If the symbol is recognized it should be sent to the ORVD server.
-    //Calculate a signature for message tag={Tag} with 'signMessage'.
+    //Calculate a signature for message "/api/tag/request?id={boardId}&tag={Tag}" with 'signMessage'.
     //Send message "tag={Tag}&sig=0x{signature}" to the topic "api/tag/request" with 'publishMessage'.
     //Receive the response from the topic "api/tag/response/" with 'receiveSubscription'.
     //Signature of the received message can be checked with 'checkSignature'.
