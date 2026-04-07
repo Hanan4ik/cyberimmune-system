@@ -11,6 +11,7 @@ topic readwrite api/flight_status/+
 topic readwrite api/fmission_kos/+
 topic readwrite api/auth/+
 topic readwrite api/events/+
+topic readwrite api/logs/+
 topic readwrite api/nmission/response/+
 topic readwrite api/nmission/request/+
 topic readwrite api/arm/response/+
@@ -31,6 +32,7 @@ topic readwrite api/flight_status/+
 topic readwrite api/fmission_kos/+
 topic readwrite api/auth/+
 topic readwrite api/events/+
+topic readwrite api/logs/+
 topic readwrite api/nmission/response/+
 topic readwrite api/nmission/request/+
 topic readwrite api/arm/response/+
@@ -50,6 +52,7 @@ topic readwrite api/flight_status/inspector
 topic readwrite api/fmission_kos/inspector
 topic readwrite api/auth/inspector
 topic readwrite api/events/inspector
+topic readwrite api/logs/inspector
 topic readwrite api/nmission/response/inspector
 topic readwrite api/nmission/request/inspector
 topic readwrite api/arm/response/inspector
@@ -69,6 +72,7 @@ topic readwrite api/flight_status/deliverer
 topic readwrite api/fmission_kos/deliverer
 topic readwrite api/auth/deliverer
 topic readwrite api/events/deliverer
+topic readwrite api/logs/deliverer
 topic readwrite api/nmission/response/deliverer
 topic readwrite api/nmission/request/deliverer
 topic readwrite api/arm/response/deliverer
