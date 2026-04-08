@@ -111,6 +111,17 @@ void serverUpdateCheck() {
         }
         else
             logEntry("Failed to receive no-flight areas through Server Connector", ENTITY_NAME, LogLevel::LOG_WARNING);
+	
+	int32_t latitude = 0;
+	int32_t longitude = 0;
+
+	int status = getCoords(latitude, longitude);
+
+	if (status == 1){
+	    logEntry("Drone latitude: " std::to_string(latitide) + " Drone longitude: " + std::to_string(longitude), ENTITY_NAME, LogLevel::LOG_INFO);
+	}
+	else
+	 logEntry("Unable to get drone coords :(", ENTITY_NAME, LogLevel::LOG_WARNING);
 
         sleep(1);
     }
