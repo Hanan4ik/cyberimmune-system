@@ -33,6 +33,8 @@
 
 # Build cache
 build
+build_deliverer
+build_inspector
 
 # clang-check
 *.plist

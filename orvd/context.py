@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 from dataclasses import dataclass, field
 
 @dataclass
@@ -21,6 +22,7 @@ class Context:
     change_forbidden_zones_A: dict = field(default_factory=dict)
     change_forbidden_zones_B: dict = field(default_factory=dict)
     change_forbidden_zones_C: dict = field(default_factory=dict)
+    uav_tag_map: dict = field(default_factory=dict)
 
     def __post_init__(self):
         def _get_coords(env_var):

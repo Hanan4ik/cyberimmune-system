@@ -1,46 +1,69 @@
 
 services:
 #################################################
-  kos:
+  kos_inspector:
     image: simulator
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: kos
-    command: /home/user/kos/cross-build.sh --target sim --mode offline --simulator-ip 172.28.0.2
+    container_name: kos_inspector
+    command: /home/user/kos/cross-build.sh --target sim --mode offline --role inspector --simulator-ip 172.28.0.2
     working_dir: /home/user/kos
     user: user
     depends_on:
-      - arducopter
+      - arducopter_inspector
     networks:
       cyberimmune:
         ipv4_address: 172.28.0.1
 #################################################
-  arducopter:
+  arducopter_inspector:
     image: simulator
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: arducopter
-    command: /home/user/ardupilot/sitl/arducopter_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5765:wait --serial6=tcp:5766:wait --serial7=tcp:5767:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025610,27.8572915,0.00,0 -I0
+    container_name: arducopter_inspector
+    command: /home/user/ardupilot/sitl/arducopter_inspector_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5775:wait --serial6=tcp:5776:wait --serial7=tcp:5777:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025203,27.8573521,0.00,193 -I1 --sysid 1
     working_dir: /home/user/ardupilot
     user: user
     restart: always
     ports:
-      - "5501:5501"
-      - "5502:5502"
-      - "5760:5760"
-      - "5761:5661"
-      - "5762:5762"
-      - "5763:5763"
-      - "5764:5764"
-      - "5765:5765"
-      - "5766:5766"
-      - "5767:5767"
-      - "9005:9005"
+      - "5771:5771"
+      - "5772:5772"
     networks:
       cyberimmune:
         ipv4_address: 172.28.0.2
+#################################################
+  kos_deliverer:
+    image: simulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: kos_deliverer
+    command: /home/user/kos/cross-build.sh --target sim --mode offline --role deliverer --simulator-ip 172.28.0.12
+    working_dir: /home/user/kos
+    user: user
+    depends_on:
+      - arducopter_deliverer
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.11
+#################################################
+  arducopter_deliverer:
+    image: simulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: arducopter_deliverer
+    command: /home/user/ardupilot/sitl/arducopter_deliverer_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5765:wait --serial6=tcp:5766:wait --serial7=tcp:5767:wait --defaults copter.parm --sim-address=172.28.0.12 --home=60.0024590,27.8573238,0.00,13 -I0 --sysid 2
+    working_dir: /home/user/ardupilot
+    user: user
+    restart: always
+    ports:
+      - "5761:5761"
+      - "5762:5762"
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.12
 #################################################
   mavproxy:
     image: simulator
@@ -48,11 +71,12 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: mavproxy
-    command: mavproxy.py --out 172.28.5.254:14550 --out 172.28.5.254:14551 --master tcp:172.28.0.2:5760 --sitl 172.28.0.2:5501 --logfile /home/user/mav.tlog --daemon
+    command: mavproxy.py --out 172.28.5.254:14550 --out 172.28.5.254:14551 --master tcp:172.28.0.12:5760 --master tcp:172.28.0.2:5770 --sitl 172.28.0.12:5501 --sitl 172.28.0.2:5502 --logfile /home/user/mav.tlog --daemon
     working_dir: /home/user/mavproxy
     user: user
     depends_on:
-      - arducopter
+      - arducopter_inspector
+      - arducopter_deliverer
     restart: always
     networks:
       cyberimmune:

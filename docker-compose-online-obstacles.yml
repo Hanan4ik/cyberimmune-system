@@ -1,48 +1,69 @@
 
 services:
 #################################################
-  kos:
+  kos_inspector:
     image: simulator
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: kos
-    command: /home/user/kos/cross-build.sh --target sim --mode online --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username ${KOS_MQTT_USERNAME} --mqtt-password ${KOS_MQTT_PASSWORD}
-    env_file: default.env
+    container_name: kos_inspector
+    command: /home/user/kos/cross-build.sh --target sim --mode online --role inspector --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username inspector --mqtt-password secret
     working_dir: /home/user/kos
     user: user
     depends_on:
-      - arducopter
-      - mqtt-server
+      - arducopter_inspector
     networks:
       cyberimmune:
         ipv4_address: 172.28.0.1
 #################################################
-  arducopter:
+  arducopter_inspector:
     image: simulator
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: arducopter
-    command: /home/user/ardupilot/sitl/arducopter_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5765:wait --serial6=tcp:5766:wait --serial7=tcp:5767:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025610,27.8572915,0.00,0 -I0
+    container_name: arducopter_inspector
+    command: /home/user/ardupilot/sitl/arducopter_inspector_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5775:wait --serial6=tcp:5776:wait --serial7=tcp:5777:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025203,27.8573521,0.00,193 -I1 --sysid 1
     working_dir: /home/user/ardupilot
     user: user
     restart: always
     ports:
-      - "5501:5501"
-      - "5502:5502"
-      - "5760:5760"
-      - "5761:5661"
-      - "5762:5762"
-      - "5763:5763"
-      - "5764:5764"
-      - "5765:5765"
-      - "5766:5766"
-      - "5767:5767"
-      - "9005:9005"
+      - "5771:5771"
+      - "5772:5772"
     networks:
       cyberimmune:
         ipv4_address: 172.28.0.2
+#################################################
+  kos_deliverer:
+    image: simulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: kos_deliverer
+    command: /home/user/kos/cross-build.sh --target sim --mode online --role deliverer --simulator-ip 172.28.0.12 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username deliverer --mqtt-password secret
+    working_dir: /home/user/kos
+    user: user
+    depends_on:
+      - arducopter_deliverer
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.11
+#################################################
+  arducopter_deliverer:
+    image: simulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: arducopter_deliverer
+    command: /home/user/ardupilot/sitl/arducopter_deliverer_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5765:wait --serial6=tcp:5766:wait --serial7=tcp:5767:wait --defaults copter.parm --sim-address=172.28.0.12 --home=60.0024590,27.8573238,0.00,13 -I0 --sysid 2
+    working_dir: /home/user/ardupilot
+    user: user
+    restart: always
+    ports:
+      - "5761:5761"
+      - "5762:5762"
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.12
 #################################################
   mavproxy:
     image: simulator
@@ -50,11 +71,12 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: mavproxy
-    command: mavproxy.py --out 172.28.5.254:14550 --out 172.28.5.254:14551 --master tcp:172.28.0.2:5760 --sitl 172.28.0.2:5501 --logfile /home/user/mav.tlog --daemon
+    command: mavproxy.py --out 172.28.5.254:14550 --out 172.28.5.254:14551 --master tcp:172.28.0.12:5760 --master tcp:172.28.0.2:5770 --sitl 172.28.0.12:5501 --sitl 172.28.0.2:5502 --logfile /home/user/mav.tlog --daemon
     working_dir: /home/user/mavproxy
     user: user
     depends_on:
-      - arducopter
+      - arducopter_inspector
+      - arducopter_deliverer
     restart: always
     networks:
       cyberimmune:
@@ -72,11 +94,6 @@ services:
       MQTT_HOST: "172.28.0.5"
       MQTT_USERNAME: ${ORVD_MQTT_USERNAME}
       MQTT_PASSWORD: ${ORVD_MQTT_PASSWORD}
-      PERMISSION_REVOKE_COORDS: 60.00261500,27.85725550
-      CONNECTION_BREAK_COORDS: 60.00261500,27.85711150
-      CHANGE_FORBIDDEN_ZONES_A: 60.0025610,27.8572915
-      CHANGE_FORBIDDEN_ZONES_B: 60.00264200,27.85714750
-      CHANGE_FORBIDDEN_ZONES_C: 60.00258800,27.85702150
     env_file: default.env
     depends_on:
       - mqtt-server
@@ -85,6 +102,28 @@ services:
         ipv4_address: 172.28.0.4
     ports:
       - "8080:8080"
+#################################################
+  recognizer:
+    image: recognizer
+    build:
+      context: ./recognizer
+      dockerfile: ./Dockerfile
+    container_name: recognizer
+    restart: always
+    environment:
+      MQTT_HOST: "172.28.0.5"
+      MQTT_PORT: "1883"
+      MQTT_USER: ${ORVD_MQTT_USERNAME}
+      MQTT_PASSWORD: ${ORVD_MQTT_PASSWORD}
+      MQTT_INPUT_TOPIC: "api/image/request"
+      MQTT_OUTPUT_TOPIC: "api/image/response"
+      RECOGNIZER_TYPE: "stub"
+      LOG_LEVEL: "INFO"
+    depends_on:
+      - mqtt-server
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.6
 #################################################
   mqtt-server:
     image: mqtt-server

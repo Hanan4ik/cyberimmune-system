@@ -72,3 +72,21 @@ def mqtt_send_mission(id: str, *args, **kwargs):
 def mqtt_publish_connection_status(*args, **kwargs):
     message = str(context.flight_info_response)
     mqtt.publish_message(MQTTTopic.CONNECTION_STATUS, message)
+
+def tag_handler(id: str, tag: str, **kwargs):
+    """
+    Обрабатывает тег от БПЛА.
+
+    Args:
+        id (str): Идентификатор БПЛА.
+        tag (str): Тег.
+    """
+    assigned_tag = context.uav_tag_map.get(id)
+    status = '$FALSE'
+    
+    if tag in ['A1', 'A2', 'A3']:
+        status = '$TRUE' if tag == assigned_tag else '$FALSE'
+    elif tag in [f'E{i}' for i in range(1, 10)]:
+        status = '$ACCEPTED'
+        
+    return f'{status} {tag}'

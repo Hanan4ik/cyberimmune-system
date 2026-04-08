@@ -22,7 +22,7 @@
 
 /** \cond */
 #define SIM_PERIPHERY_MESSAGE_HEAD_SIZE 4
-#define RFID_TAG_NUM 10
+#define TAG_NUM 3
 
 static const uint8_t SimPeripheryMessageHead[SIM_PERIPHERY_MESSAGE_HEAD_SIZE] = { 0x06, 0x66, 0xbe, 0xa7 };
 /** \endcond */
@@ -101,27 +101,31 @@ struct SimPeripheryMessage {
 
 /** \cond */
 int peripherySocket = NULL;
+#ifdef IS_INSPECTOR
+uint16_t peripheryPort = 5777;
+#else
 uint16_t peripheryPort = 5767;
+#endif
 
 float scanSquaredDistance = 0.25;
 float latScale = 0.011131884502145f;
 float lngScale = 0.011131884502145f;
-int32_t rfidLats[RFID_TAG_NUM] = { 600025970, 600025880, 600026150, 600026420, 600026420, 600026150, 600025880, 600025970, 600025880, 600026420 };
-int32_t rfidLngs[RFID_TAG_NUM] = { 278572915, 278572015, 278572555, 278572915, 278571475, 278571115, 278571475, 278570755, 278570215, 278570575 };
-char rfidIDs[RFID_TAG_NUM][6] = { "rfid0", "rfid1", "rfid2", "rfid3", "rfid4", "rfid5", "rfid6", "rfid7", "rfid8", "rfid9" };
+int32_t tagLats[TAG_NUM] = { 600024368, 600024166, 600024428 };
+int32_t tagLngs[TAG_NUM] = { 278576362, 278576914, 278577035 };
+char tagPictures[TAG_NUM][9] = { "picture1", "picture2", "picture3" };
 
 bool killSwitchEnabled;
 /** \endcond */
 
 int initPeripheryController() {
-    if (!wait_for_network()) {
+    if (!wait_for_iface(DEFAULT_INTERFACE, IWF_EXISTS, DEFAULT_TIMEOUT) || !configure_net_iface(DEFAULT_INTERFACE, DEFAULT_ADDR, DEFAULT_MASK, DEFAULT_GATEWAY, DEFAULT_MTU)) {
         logEntry("Connection to network has failed", ENTITY_NAME, LogLevel::LOG_ERROR);
         return 0;
     }
 
     float avgLat = 0;
-    for (int i = 0; i < RFID_TAG_NUM; i++)
-        avgLat += 1.0f * rfidLats[i] / RFID_TAG_NUM;
+    for (int i = 0; i < TAG_NUM; i++)
+        avgLat += 1.0f * tagLats[i] / TAG_NUM;
     float scale = cos(avgLat * 1.0e-7 * M_PI / 180.0f);
     if (scale < 0.01f)
         scale = 0.01f;
@@ -165,23 +169,22 @@ int setBuzzer(bool enable) {
     return 1;
 }
 
-int readRfid(char* tag) {
+int takePicture(char* picture) {
     int32_t lat, lng, alt;
     getCoords(lat, lng, alt);
 
     float latDif, lngDif;
-    float altSquaredDif = (alt * alt) / 10000.0f;
-    for (int i = 0; i < RFID_TAG_NUM; i++) {
-        latDif = (rfidLats[i] - lat) * latScale;
-        lngDif = (rfidLngs[i] - lng) * lngScale;
+    for (int i = 0; i < TAG_NUM; i++) {
+        latDif = (tagLats[i] - lat) * latScale;
+        lngDif = (tagLngs[i] - lng) * lngScale;
 
-        if (latDif * latDif + lngDif * lngDif + altSquaredDif  < scanSquaredDistance) {
-            strcpy(tag, rfidIDs[i]);
+        if (latDif * latDif + lngDif * lngDif < scanSquaredDistance) {
+            strcpy(picture, tagPictures[i]);
             return 1;
         }
     }
 
-    strcpy(tag, "");
+    strcpy(picture, "picture0");
     return 1;
 }
 
@@ -189,7 +192,7 @@ int setKillSwitch(bool enable) {
     SimPeripheryMessage message = SimPeripheryMessage(enable ? SimPeripheryCommand::MotorPermit : SimPeripheryCommand::MotorForbid);
     write(peripherySocket, &message, sizeof(SimPeripheryMessage));
     killSwitchEnabled = enable;
-    if (!publishMessage("api/events", enable ? "type=kill_switch&event=Kill-switch is enabled" : "type=kill_switch&event=Kill-switch is disabled"))
+    if (!publishMessage("api/events", enable ? "type=kill_switch&event=OFF" : "type=kill_switch&event=ON"))
         logEntry("Failed to publish event message", ENTITY_NAME, LogLevel::LOG_WARNING);
 
     return 1;
@@ -198,7 +201,7 @@ int setKillSwitch(bool enable) {
 int setCargoLock(bool enable) {
     SimPeripheryMessage message = SimPeripheryMessage(enable ? SimPeripheryCommand::CargoPermit : SimPeripheryCommand::CargoForbid);
     write(peripherySocket, &message, sizeof(SimPeripheryMessage));
-    if (!publishMessage("api/events", enable ? "type=cargo_lock&event=Cargo lock is enabled" : "type=kill_switch&event=Cargo lock is disabled"))
+    if (!publishMessage("api/events", enable ? "type=cargo_lock&event=OFF" : "type=kill_switch&event=ON"))
         logEntry("Failed to publish event message", ENTITY_NAME, LogLevel::LOG_WARNING);
 
     return 1;

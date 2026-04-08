@@ -1,3 +1,4 @@
 orvd secret
 infopanel secret
-52_58_00_12_34_bb secret
+inspector secret
+deliverer secret

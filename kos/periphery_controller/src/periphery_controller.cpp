@@ -42,6 +42,8 @@ void buzz() {
     }
     setBuzzer(false);
     buzzerEnabled = false;
+    if (!publishMessage("api/events", "type=buzzer&event=OFF"))
+        logEntry("Failed to publish event message", ENTITY_NAME, LogLevel::LOG_WARNING);
 }
 
 int startBuzzer() {
@@ -50,25 +52,7 @@ int startBuzzer() {
     if (buzzerThread.joinable())
         buzzerThread.join();
     buzzerThread = std::thread(buzz);
-    if (!publishMessage("api/events", "type=buzzer&event=Buzzer is enabled"))
+    if (!publishMessage("api/events", "type=buzzer&event=ON"))
         logEntry("Failed to publish event message", ENTITY_NAME, LogLevel::LOG_WARNING);
-    return 1;
-}
-
-int readRfid(uint8_t &foundTag) {
-    foundTag = 0;
-    char tag[36] = {0};
-
-    if (!readRfid(tag))
-        return 0;
-
-    if (strcmp(tag, "")) {
-        foundTag = 1;
-        char publication[1024] = {0};
-        snprintf(publication, 1024, "tag=%s", tag);
-        if (!publishMessage("api/rfid", publication))
-            logEntry("Failed to publish scanned RFID tag", ENTITY_NAME, LogLevel::LOG_WARNING);
-    }
-
     return 1;
 }

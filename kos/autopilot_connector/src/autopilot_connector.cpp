@@ -20,7 +20,28 @@
 
 /** \cond */
 bool armIsRequested = false;
+bool correctHeader = true;
 /** \endcond */
+
+/**
+ * \~English Persistently read the specified number of bytes.
+ * \param[in] byteNum Number of expected bytes.
+ * \param[out] bytes Pointer to where the bytes will be written.
+ * \~Russian Считывает указанное число байтов.
+ * \param[in] byteNum Ожидаемое число байтов.
+ * \param[out] bytes Указатель на то, куда будут записаны байты.
+ */
+void getBytes(uint32_t byteNum, uint8_t* bytes) {
+    while (true) {
+        ssize_t size = readBytes(byteNum, bytes);
+        if (size != byteNum) {
+            bytes += size;
+            byteNum -= size;
+            continue;
+        }
+        break;
+    }
+}
 
 int isArmRequested() {
     if (armIsRequested) {
@@ -89,35 +110,44 @@ int sendAutopilotCommand(AutopilotCommand command, uint8_t* rawBytes, int32_t by
 }
 
 void listenAutopilot() {
-    uint8_t command;
     while (true) {
-        if (!getAutopilotCommand(command))
-            continue;
+        uint8_t byte;
+        for (int i = 0; i < AUTOPILOT_COMMAND_MESSAGE_HEAD_SIZE; i++) {
+            getBytes(sizeof(uint8_t), &byte);
+            if (byte != AutopilotCommandMessageHead[i]) {
+                if (correctHeader) {
+                    correctHeader = false;
+                    logEntry("Received message has an unknown header", ENTITY_NAME, LogLevel::LOG_WARNING);
+                }
+                continue;
+            }
+        }
+        correctHeader = true;
 
-        if (command == AutopilotCommand::ArmRequest)
+        getBytes(sizeof(uint8_t), &byte);
+        if (byte == AutopilotCommand::ArmRequest)
             armIsRequested = true;
-        else if (command == AutopilotCommand::AutopilotEvent) {
+        else if (byte == AutopilotCommand::AutopilotEvent) {
             uint32_t dataLength;
-            if (!getAutopilotBytes(sizeof(uint32_t), (uint8_t*)(&dataLength)))
-                continue;
+            getBytes(sizeof(uint32_t), (uint8_t*)(&dataLength));
 
-            uint8_t* data = (uint8_t*)malloc(dataLength);
-            if (!getAutopilotBytes(dataLength, data))
-                continue;
+            uint8_t* data = (uint8_t*)malloc(dataLength + 1);
+            getBytes(dataLength, data);
+            data[dataLength] = 0;
 
             char message[256] = {0};
             switch (data[0]) {
             case 1:
-                snprintf(message, 256, "type=info_firmare&event=%s", data + 1);
+                snprintf(message, 256, "type=info_firmware&event=%s", data + 1);
                 break;
             case 2:
                 snprintf(message, 256, "type=info_obstacle&event=%s", data + 1);
                 break;
             case 3:
-                snprintf(message, 256, "type=arm&event=%s", data + 1);
+                snprintf(message, 256, "type=arm_state&event=%s", data + 1);
                 break;
             case 4:
-                snprintf(message, 256, "type=disarm&event=%s", data + 1);
+                snprintf(message, 256, "type=mission_mode&event=%s", data + 1);
                 break;
             case 5:
                 snprintf(message, 256, "type=mission_command&event=%s", data + 1);
@@ -131,12 +161,16 @@ void listenAutopilot() {
             case 8:
                 snprintf(message, 256, "type=obstacle&event=%s", data + 1);
                 break;
+            case 9:
+                snprintf(message, 256, "type=cargo_servo=%s", data + 1);
             default:
                 break;
             }
 
             if (!publishMessage("api/events", message))
                 logEntry("Failed to publish event message", ENTITY_NAME, LogLevel::LOG_WARNING);
+
+            free(data);
         }
     }
 }

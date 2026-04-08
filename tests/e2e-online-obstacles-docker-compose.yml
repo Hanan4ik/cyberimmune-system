@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: kos
-    command: /home/user/kos/cross-build.sh --target sim --mode online --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username "${KOS_MQTT_USERNAME}" --mqtt-password "${KOS_MQTT_PASSWORD}" --board-id 52:58:00:12:34:bb
+    command: /home/user/kos/cross-build.sh --target sim --mode online --role inspector --partner-id NULL --board-id inspector --simulator-ip 172.28.0.2 --server-ip 172.28.0.4 --mqtt-ip 172.28.0.5 --mqtt-username inspector --mqtt-password secret
     working_dir: /home/user/kos
     user: user
     depends_on:
@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: arducopter
-    command: /home/user/ardupilot/sitl/arducopter_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5765:wait --serial6=tcp:5766:wait --serial7=tcp:5767:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025610,27.8572915,0.00,0 -I0
+    command: /home/user/ardupilot/sitl/arducopter_inspector_obstacles -S --model + --speedup 1 --slave 0  --serial5=tcp:5775:wait --serial6=tcp:5776:wait --serial7=tcp:5777:wait --defaults copter.parm --sim-address=172.28.0.2 --home=60.0025203,27.8573521,0.00,193 -I0
     working_dir: /home/user/ardupilot
     user: user
     restart: always
@@ -77,6 +77,28 @@ services:
         ipv4_address: 172.28.0.4
     ports:
       - "8080:8080"
+#################################################
+  recognizer:
+    image: recognizer
+    build:
+      context: ./recognizer
+      dockerfile: ./Dockerfile
+    container_name: recognizer
+    restart: always
+    environment:
+      MQTT_HOST: "172.28.0.5"
+      MQTT_PORT: "1883"
+      MQTT_USER: ${ORVD_MQTT_USERNAME}
+      MQTT_PASSWORD: ${ORVD_MQTT_PASSWORD}
+      MQTT_INPUT_TOPIC: "api/image/request"
+      MQTT_OUTPUT_TOPIC: "api/image/response"
+      RECOGNIZER_TYPE: "stub"
+      LOG_LEVEL: "INFO"
+    depends_on:
+      - mqtt-server
+    networks:
+      cyberimmune:
+        ipv4_address: 172.28.0.6
 #################################################
   mqtt-server:
     image: mqtt-server

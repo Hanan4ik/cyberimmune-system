@@ -9,6 +9,7 @@ from handlers.api_handlers import (
     telemetry_handler, arm_handler, save_logs_handler, revise_mission_handler,
     save_events_handler
 )
+from handlers.mqtt_handlers import tag_handler
 
 def extract_id_from_kwargs(kwargs):
     id = kwargs.get('id')
@@ -100,3 +101,53 @@ def revise_mission(client, userdata, msg, **kwargs):
             mqtt.publish_message(MQTTTopic.NMISSION_RESPONSE.format(id=id), response[0])
     except Exception as e:
         print(f"Error handling mission message: {e}")
+        
+@mqtt.topic(MQTTTopic.TAG_REQUEST)
+def tag_request(client, userdata, msg, **kwargs):
+    try:
+        query_string = msg.payload.decode()
+        query_params = parse_qs(query_string)
+        payload = {k: v[0] for k, v in query_params.items()}
+        id = extract_id_from_kwargs(kwargs)
+        
+        response = signed_request(handler_func=tag_handler, verifier_func=verify, signer_func=sign,
+                                    query_str=f"{APIRoute.TAG}?id={id}&tag={payload.get('tag')}",
+                                    key_group=f'{KeyGroup.KOS}{id}', sig=payload['sig'], id=id, tag=payload.get('tag'))
+        if not context.flight_info_response:
+            return
+        if len(response) == 2 and response[1] == 200:
+            mqtt.publish_message(MQTTTopic.TAG_RESPONSE.format(id=id), response[0])
+    except Exception as e:
+        print(f"Error handling tag message: {e}")
+
+@mqtt.topic(MQTTTopic.DM)
+def direct_message(client, userdata, msg, **kwargs):
+    """
+    Обрабатывает личные сообщения между дронами. Просто выводит сообщение.
+    """
+    try:
+        receiver_id = kwargs.get('receiver_id')
+        sender_id = kwargs.get('sender_id')
+
+        if not sender_id or not receiver_id:
+            print("Sender or receiver ID not found in topic for direct message.")
+            return
+
+        message_with_sig = msg.payload.decode()
+        parts = message_with_sig.split('#')
+        
+        if len(parts) != 2:
+            print(f"Invalid DM payload format: {message_with_sig}")
+            return
+        
+        message = parts[0]
+        sig = parts[1]
+
+        if not message or not sig:
+            print(f"Invalid payload for DM: {message_with_sig}")
+            return
+
+        print(f"DM from {sender_id} to {receiver_id}: {message}")
+
+    except Exception as e:
+        print(f"Error handling direct message: {e}")
