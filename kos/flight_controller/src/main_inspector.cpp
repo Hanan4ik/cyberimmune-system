@@ -114,11 +114,15 @@ void serverUpdateCheck() {
 	
 	int32_t latitude = 0;
 	int32_t longitude = 0;
+	int32_t altitude = 0;
 
-	int status = getCoords(latitude, longitude);
+	int status = getCoords(latitude, longitude, altitude);
 
 	if (status == 1){
-	    logEntry("Drone latitude: " std::to_string(latitide) + " Drone longitude: " + std::to_string(longitude), ENTITY_NAME, LogLevel::LOG_INFO);
+	    double lat = latitude / 10000000;
+	    double longi = longitude / 10000000;
+	    double alt = altitude / 10000000
+	    logEntry("Drone latitude: " std::to_string(lat) + " Drone longitude: " + std::to_string(longi) + " Drone altitude" + std::to_string(alt), ENTITY_NAME, LogLevel::LOG_INFO);
 	}
 	else
 	 logEntry("Unable to get drone coords :(", ENTITY_NAME, LogLevel::LOG_WARNING);
